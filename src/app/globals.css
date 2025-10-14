@@ -1,0 +1,96 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 96%;
+    --foreground: 220 15% 15%;
+    --card: 220 20% 96%;
+    --card-foreground: 220 15% 15%;
+    --popover: 220 20% 96%;
+    --popover-foreground: 220 15% 15%;
+    --primary: 210 40% 50%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 28% 90%;
+    --secondary-foreground: 220 15% 15%;
+    --muted: 215 28% 90%;
+    --muted-foreground: 217.2 32.6% 17.5%;
+    --accent: 150 60% 50%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 28% 85%;
+    --input: 215 28% 85%;
+    --ring: 210 40% 50%;
+    --chart-1: 210 40% 50%;
+    --chart-2: 150 60% 50%;
+    --chart-3: 37 91% 65%;
+    --chart-4: 0 72% 51%;
+    --chart-5: 257 85% 65%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 220 15% 10%;
+    --foreground: 210 20% 98%;
+    --card: 220 15% 10%;
+    --card-foreground: 210 20% 98%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 40% 50%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 28% 20%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 28% 20%;
+    --muted-foreground: 217.2 32.6% 77.5%;
+    --accent: 150 60% 50%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 28% 25%;
+    --input: 215 28% 25%;
+    --ring: 210 40% 50%;
+    --chart-1: 210 40% 50%;
+    --chart-2: 150 60% 50%;
+    --chart-3: 37 91% 65%;
+    --chart-4: 0 72% 51%;
+    --chart-5: 257 85% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  @keyframes cylinder-blast {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(30);
+      opacity: 0;
+    }
+  }
+
+  .animate-cylinder-blast {
+    animation: cylinder-blast 2s ease-out forwards;
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg); }
+  }
+
+  .animate-wave {
+      animation: wave 2s ease-in-out infinite;
+      transform-origin: bottom;
+  }
+}

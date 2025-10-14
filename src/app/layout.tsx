@@ -1,0 +1,44 @@
+
+import type {Metadata} from 'next';
+import './globals.css';
+import { Toaster } from "@/components/ui/toaster"
+import { ProfileProvider } from '@/context/profile-context';
+import { SettingsProvider } from '@/context/settings-context';
+import { AuthProvider } from '@/context/auth-context';
+import { NotificationProvider } from '@/context/notification-context';
+import { SocketProvider } from '@/context/socket-context';
+
+export const metadata: Metadata = {
+  title: 'LEADWAY GAS',
+  description: 'Admin panel for managing gas booking and delivery.',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="h-full bg-background" suppressHydrationWarning={true}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-body antialiased h-full" suppressHydrationWarning={true}>
+        <AuthProvider>
+          <SocketProvider>
+            <ProfileProvider>
+              <SettingsProvider>
+                <NotificationProvider>
+                  {children}
+                </NotificationProvider>
+              </SettingsProvider>
+            </ProfileProvider>
+          </SocketProvider>
+        </AuthProvider>
+        <Toaster />
+      </body>
+    </html>
+  );
+}
