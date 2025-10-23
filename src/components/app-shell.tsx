@@ -159,7 +159,7 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
           key={href}
           href={href}
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-[#035db7]',
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-[#000]',
             pathname === href && 'bg-[#035db7] text-[#fff]'
           )}
         >

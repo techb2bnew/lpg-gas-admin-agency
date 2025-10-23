@@ -83,6 +83,15 @@ export default function ProductsPage() {
     fetchData();
   }, [fetchData]);
 
+  // Auto-check for zero stock and inactive products when data loads
+  useEffect(() => {
+    if (products.length > 0 && !isAdmin) {
+      products.forEach(product => {
+        autoInactiveWhenStockZero(product);
+      });
+    }
+  }, [products, isAdmin, token, profile.agencyId]);
+
   // Socket connection status effect
   // useEffect(() => {
   //   if (isConnected) {
@@ -463,6 +472,44 @@ export default function ProductsPage() {
     }
   }
 
+  // Auto-inactive functionality when stock becomes 0
+  const autoInactiveWhenStockZero = async (product: Product) => {
+    if (!token || isAdmin || !product.AgencyInventory) return;
+    
+    const agencyInventory = product.AgencyInventory.find(inv => inv.agencyId === profile.agencyId);
+    if (!agencyInventory || !agencyInventory.isActive) return;
+
+    const totalStock = agencyInventory.agencyVariants.reduce((sum, variant) => sum + (variant.stock || 0), 0);
+    
+    if (totalStock === 0) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/products/${product.id}/inventory/agency/${agencyInventory.agencyId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({ isActive: false })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            toast({ 
+              title: 'Auto-Inactive', 
+              description: `${product.productName} automatically set to inactive due to zero stock.`,
+              variant: 'destructive'
+            });
+            fetchData();
+          }
+        }
+      } catch (e) {
+        console.error("Failed to auto-inactive product:", e);
+      }
+    }
+  }
+
   return (
     <AppShell>
       <PageHeader title="Product & Inventory">
@@ -539,10 +586,15 @@ export default function ProductsPage() {
                       <TableCell className="capitalize">{getCategoryName(product.category)}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span>{totalStock}</span>
+                          <span className={cn(totalStock === 0 && !isAdmin ? "text-red-600 font-semibold" : "")}>{totalStock}</span>
                           {isLowStock && (isAdmin || !!agencyInventory) && (
                             <Badge variant="destructive" className="flex items-center gap-1">
                               <AlertCircle className="h-3 w-3" /> Low
+                            </Badge>
+                          )}
+                          {totalStock === 0 && !isAdmin && agencyInventory && agencyInventory.isActive && (
+                            <Badge variant="destructive" className="flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" /> Auto-Inactive
                             </Badge>
                           )}
                         </div>
@@ -576,14 +628,15 @@ export default function ProductsPage() {
                                   {agencyInventory ? (
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" size="sm" className="w-28 justify-between capitalize">
-                                            <span className={cn({
-                                                'text-green-600': agencyInventory.isActive,
-                                                'text-gray-500': !agencyInventory.isActive
-                                            })}>
-                                                {agencyInventory.isActive ? 'Active' : 'Inactive'}
+                                        <Button variant="outline" size="sm" className={cn("w-28 justify-between capitalize", {
+                                          'bg-destructive text-destructive-foreground hover:bg-destructive/90': !agencyInventory.isActive,
+                                          'bg-green-600 text-white hover:bg-green-600/90': agencyInventory.isActive && totalStock > 0,
+                                          'bg-orange-600 text-white hover:bg-orange-600/90': agencyInventory.isActive && totalStock === 0
+                                        })}>
+                                            <span>
+                                                {agencyInventory.isActive ? (totalStock === 0 ? 'Zero Stock' : 'Active') : 'Inactive'}
                                             </span>
-                                            <ChevronDown className="h-4 w-4 text-muted-foreground"/>
+                                            <ChevronDown className="h-4 w-4"/>
                                         </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="start">
@@ -595,8 +648,19 @@ export default function ProductsPage() {
                                   ) : (
                                     <Badge variant='outline'>Not In Inventory</Badge>
                                   )}
-                                   <p className={cn('text-xs mt-1', agencyInventory ? 'text-green-600' : 'text-red-600')}>
-                                        {agencyInventory ? 'In My Inventory' : 'Not In My Inventory'}
+                                   <p className={cn('text-xs mt-1', {
+                                     'text-green-600': agencyInventory && agencyInventory.isActive && totalStock > 0,
+                                     'text-orange-600': agencyInventory && agencyInventory.isActive && totalStock === 0,
+                                     'text-red-600': agencyInventory && !agencyInventory.isActive,
+                                     'text-gray-500': !agencyInventory
+                                   })}>
+                                        {agencyInventory ? 
+                                          (agencyInventory.isActive ? 
+                                            (totalStock === 0 ? 'Zero Stock - Auto-Inactive Soon' : 'In My Inventory') : 
+                                            'Inactive in My Inventory'
+                                          ) : 
+                                          'Not In My Inventory'
+                                        }
                                     </p>
                                 </div>
                            )}
