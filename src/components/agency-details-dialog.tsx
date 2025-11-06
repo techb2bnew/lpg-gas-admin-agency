@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import type { Agency } from '@/lib/types';
 import { Mail, Phone, MapPin, Calendar, Building2 } from 'lucide-react';
 import { Separator } from './ui/separator';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -51,7 +51,7 @@ export function AgencyDetailsDialog({ agency, isOpen, onOpenChange }: AgencyDeta
             <div>
                 <DialogTitle className="text-2xl">{agency.name}</DialogTitle>
                 <DialogDescription>
-                    Agency since {new Date(agency.createdAt).toLocaleDateString()}
+                    Agency since {formatDate(agency.createdAt)}
                 </DialogDescription>
             </div>
           </div>

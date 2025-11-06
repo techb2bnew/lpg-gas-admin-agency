@@ -44,7 +44,7 @@ interface EditProductDialogProps {
 
 const variantSchema = z.object({
   value: z.coerce.number().min(0, "Value must be a positive number."),
-  unit: z.enum(['kg', 'meter']),
+  unit: z.enum(['Lbs', 'meter']),
   price: z.coerce.number().min(0, "Price must be positive."),
   stock: z.coerce.number().int().min(0, "Stock must be a whole number.").optional(),
 });
@@ -73,7 +73,7 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      variants: [{ value: '' as any, unit: 'kg', price: '' as any, stock: '' as any }],
+      variants: [{ value: '' as any, unit: 'Lbs', price: '' as any, stock: '' as any }],
     }
   });
 
@@ -109,7 +109,7 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
             variants: variantsToShow.map(v => ({
                 ...v, 
                 value: parseFloat(v.label || '0'), 
-                unit: (v.label || '').endsWith('kg') ? 'kg' : 'meter',
+                unit: (v.label || '').endsWith('Lbs') ? 'Lbs' : 'meter',
                 stock: v.stock || 0
             })),
             lowStockThreshold: thresholdToShow,
@@ -207,8 +207,8 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
                                   <div key={field.id} className="flex items-start gap-2 p-3 border rounded-md relative">
                                        <div className={cn("grid grid-cols-1 sm:grid-cols-4 gap-2 flex-1", { "sm:grid-cols-3": isAdmin })}>
                                           <FormField control={form.control} name={`variants.${index}.value`} render={({ field }) => (<FormItem><FormLabel>Value</FormLabel><FormControl><Input type="number" placeholder="e.g. 14.2" {...field} disabled={!isAdmin} /></FormControl><FormMessage /></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isAdmin}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="kg">kg</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Price (₹)</FormLabel><FormControl><Input type="number" placeholder="1100" {...field} disabled={!isAdmin} /></FormControl><FormMessage /></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isAdmin}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Price ($)</FormLabel><FormControl><Input type="number" placeholder="1100" {...field} disabled={!isAdmin} /></FormControl><FormMessage /></FormItem>)} />
                                           {!isAdmin && (
                                             <FormField control={form.control} name={`variants.${index}.stock`} render={({ field }) => (<FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" placeholder="150" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                           )}
@@ -220,7 +220,7 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
                               ))}
                           </div>
                           {isAdmin && (
-                            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => append({ value: '' as any, unit: 'kg', price: '' as any, stock: '' as any })}><PlusCircle className="mr-2 h-4 w-4"/>Add Variant</Button>
+                            <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => append({ value: '' as any, unit: 'Lbs', price: '' as any, stock: '' as any })}><PlusCircle className="mr-2 h-4 w-4"/>Add Variant</Button>
                           )}
                           <FormMessage>{form.formState.errors.variants?.message || form.formState.errors.variants?.root?.message}</FormMessage>
                       </div>

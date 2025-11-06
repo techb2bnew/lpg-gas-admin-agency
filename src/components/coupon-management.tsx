@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { ProfileContext } from '@/context/profile-context';
 import socketService from '@/lib/socket';
+import { formatDate } from '@/lib/utils';
 
 interface Coupon {
   id: string;
@@ -450,7 +451,7 @@ export function CouponManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="discountValue">
-                      Discount Value {formData.discountType === 'percentage' ? '(%)' : '(₹)'}
+                      Discount Value {formData.discountType === 'percentage' ? '(%)' : '($)'}
                     </Label>
                     <Input
                       id="discountValue"
@@ -461,7 +462,7 @@ export function CouponManagement() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="minAmount">Minimum Amount (₹)</Label>
+                    <Label htmlFor="minAmount">Minimum Amount ($)</Label>
                     <Input
                       id="minAmount"
                       type="number"
@@ -473,7 +474,7 @@ export function CouponManagement() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="maxAmount">Maximum Amount (₹) - Optional</Label>
+                    <Label htmlFor="maxAmount">Maximum Amount ($) - Optional</Label>
                     <Input
                       id="maxAmount"
                       type="number"
@@ -582,7 +583,7 @@ export function CouponManagement() {
                     <TableCell>
                       <div className="flex items-center gap-1 text-sm">
                         <Calendar className="h-3 w-3" />
-                        <span>{new Date(coupon.expiryDate).toLocaleDateString()}</span>
+                        <span>{formatDate(coupon.expiryDate)}</span>
                         <Clock className="h-3 w-3 ml-1" />
                         <span>{coupon.expiryTime}</span>
                       </div>

@@ -14,7 +14,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { AddPolicyDialog } from '@/components/add-policy-dialog';
 import { EditPolicyDialog } from '@/components/edit-policy-dialog';
 
@@ -262,7 +262,7 @@ export default function PrivacyPolicyPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell">{new Date(policy.updatedAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{formatDate(policy.updatedAt)}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

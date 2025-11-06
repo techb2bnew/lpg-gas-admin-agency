@@ -166,7 +166,7 @@ export default function ProductAgenciesPage() {
                                    {inventory.agencyVariants.map((variant, vIndex) => (
                                        <TableRow key={vIndex}>
                                            <TableCell>{variant.label}</TableCell>
-                                           <TableCell className="text-right">₹{variant.price.toLocaleString()}</TableCell>
+                                           <TableCell className="text-right">${variant.price.toLocaleString()}</TableCell>
                                            <TableCell className="text-right">{variant.stock}</TableCell>
                                        </TableRow>
                                    ))}

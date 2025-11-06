@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { AuthContext, useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
+import { formatDate } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -209,7 +210,7 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Total Amount</p>
-                  <p className="font-bold text-lg">₹{parseFloat(order.totalAmount).toLocaleString()}</p>
+                  <p className="font-bold text-lg">${parseFloat(order.totalAmount).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Payment Method</p>
@@ -299,9 +300,9 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
                       <p className="text-sm text-muted-foreground">Variant: {item.variantLabel}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">₹{item.variantPrice.toLocaleString()}</p>
+                      <p className="font-semibold">${item.variantPrice.toLocaleString()}</p>
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                      <p className="text-sm font-medium">Total: ₹{item.total.toLocaleString()}</p>
+                      <p className="text-sm font-medium">Total: ${item.total.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -528,7 +529,7 @@ export default function AgentDetailsPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4" />
-                  <span>Joined {new Date(agent.joinedAt).toLocaleDateString()}</span>
+                  <span>Joined {formatDate(agent.joinedAt)}</span>
                 </div>
               </div>
             </div>
@@ -577,7 +578,7 @@ export default function AgentDetailsPage() {
               <DollarSign className="h-5 w-5 text-green-500" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Earnings</p>
-                <p className="text-2xl font-bold">₹{statistics.totalEarnings.toLocaleString()}</p>
+                <p className="text-2xl font-bold">${statistics.totalEarnings.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -641,7 +642,7 @@ export default function AgentDetailsPage() {
                               {order.status.replace('_', ' ')}
                             </Badge>
                           </TableCell>
-                          <TableCell>₹{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                          <TableCell>${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                           <TableCell className="capitalize">
                             {order.paymentMethod ? order.paymentMethod.replace('_', ' ') : 'Not specified'}
                           </TableCell>
@@ -654,10 +655,10 @@ export default function AgentDetailsPage() {
                             {order.deliveryMode ? order.deliveryMode.replace('_', ' ') : 'Not specified'}
                           </TableCell>
                           <TableCell>
-                            {new Date(order.createdAt).toLocaleDateString()}
+                            {formatDate(order.createdAt)}
                           </TableCell>
                           <TableCell>
-                            {order.assignedAt ? new Date(order.assignedAt).toLocaleDateString() : 'Not assigned'}
+                            {order.assignedAt ? formatDate(order.assignedAt) : 'Not assigned'}
                           </TableCell>
                           <TableCell>
                             <OrderDetailsDialog order={order}>
@@ -727,11 +728,11 @@ export default function AgentDetailsPage() {
                           <div className="flex-1">
                             <h4 className="font-semibold">#{delivery.orderNumber.slice(-8)}</h4>
                             <p className="text-sm text-muted-foreground">{delivery.customerName}</p>
-                            <p className="text-sm font-medium">₹{parseFloat(delivery.totalAmount).toLocaleString()}</p>
+                            <p className="text-sm font-medium">${parseFloat(delivery.totalAmount).toLocaleString()}</p>
                           </div>
                           <div className="text-right">
                             <p className="text-sm text-muted-foreground">
-                              {new Date(delivery.deliveredAt).toLocaleDateString()}
+                              {formatDate(delivery.deliveredAt)}
                             </p>
                             <Badge variant={delivery.paymentReceived ? 'default' : 'secondary'}>
                               {delivery.paymentReceived ? 'Paid' : 'Pending'}
@@ -788,7 +789,7 @@ export default function AgentDetailsPage() {
                             <p className="text-sm text-muted-foreground">{month.deliveries} deliveries</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-bold">₹{month.earnings.toLocaleString()}</p>
+                            <p className="text-lg font-bold">${month.earnings.toLocaleString()}</p>
                           </div>
                         </div>
                       </CardContent>

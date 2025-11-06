@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Trash2, Mail, Loader2, ChevronDown, Filter } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Mail, Loader2, ChevronDown, Filter, Pencil, FileText } from 'lucide-react';
 import type { Agent, Agency } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { EditAgentDialog } from '@/components/edit-agent-dialog';
@@ -29,7 +29,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { AuthContext, useAuth } from '@/context/auth-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileContext } from '@/context/profile-context';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { useNotifications } from '@/context/notification-context';
 import { useRouter } from 'next/navigation';
 
@@ -571,7 +571,7 @@ export default function AgentsPage() {
                       {agent.status}
                     </Badge>
                   </TableCell>
-                  <TableCell onClick={() => handleViewReport(agent)} className="hidden lg:table-cell">{new Date(agent.joinedAt).toLocaleDateString()}</TableCell>
+                  <TableCell onClick={() => handleViewReport(agent)} className="hidden lg:table-cell">{formatDate(agent.joinedAt)}</TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -581,9 +581,18 @@ export default function AgentsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(agent)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleViewReport(agent)}>View Report</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(agent)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(agent)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleViewReport(agent)}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          View Report
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(agent)}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

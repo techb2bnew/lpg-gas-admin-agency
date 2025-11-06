@@ -320,7 +320,7 @@ export function TaxManagement() {
                   {taxConfig.percentage > 0 ? (
                     <span> {taxConfig.percentage}% tax rate</span>
                   ) : (
-                    <span> ₹{taxConfig.fixedAmount} fixed tax amount</span>
+                    <span> ${taxConfig.fixedAmount} fixed tax amount</span>
                   )}
                 </AlertDescription>
               </Alert>
@@ -363,15 +363,15 @@ export function TaxManagement() {
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: 10% means ₹10 tax on ₹100 order
+                    Example: 10% means $10 tax on $100 order
                   </p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="fixed-amount-input">Fixed Tax Amount (₹)</Label>
+                  <Label htmlFor="fixed-amount-input">Fixed Tax Amount ($)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      ₹
+                      $
                     </span>
                     <Input
                       id="fixed-amount-input"
@@ -385,7 +385,7 @@ export function TaxManagement() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: ₹50 means ₹50 tax on every order
+                    Example: $50 means $50 tax on every order
                   </p>
                 </div>
               )}

@@ -9,13 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MoreHorizontal, FileDown, ChevronDown, Search, Loader2, Calendar as CalendarIcon, X } from 'lucide-react';
+import { MoreHorizontal, FileDown, ChevronDown, Search, Loader2, Calendar as CalendarIcon, X, Eye, UserPlus, RotateCcw, XCircle } from 'lucide-react';
 import type { Order, Agent } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { AssignAgentDialog } from '@/components/assign-agent-dialog';
 import { CancelOrderDialog } from '@/components/cancel-order-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { ReturnOrderDialog } from '@/components/return-order-dialog';
 import { Input } from '@/components/ui/input';
 import { AuthContext, useAuth } from '@/context/auth-context';
@@ -175,7 +175,7 @@ function OrdersTable({
                       )}
                     </TableCell>
                   )}
-                  <TableCell className="hidden md:table-cell">₹{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                  <TableCell className="hidden md:table-cell">${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                   <TableCell className="hidden lg:table-cell">
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -213,7 +213,7 @@ function OrdersTable({
                     )}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {formatDate(order.createdAt)}
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     {order.status === 'pending' ? (
@@ -236,17 +236,27 @@ function OrdersTable({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => onShowDetails(order)}>View Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onShowDetails(order)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                            </DropdownMenuItem>
                             {(order.status === 'confirmed' && order.deliveryMode !== 'pickup') && (
-                            <DropdownMenuItem className="bg-green-500 text-white hover:!bg-green-600 hover:!text-white focus:!bg-green-600 focus:!text-white" onClick={() => onAssignAgent(order)}>Assign Agent</DropdownMenuItem>
+                            <DropdownMenuItem className="bg-green-500 text-white hover:!bg-green-600 hover:!text-white focus:!bg-green-600 focus:!text-white" onClick={() => onAssignAgent(order)}>
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                Assign Agent
+                            </DropdownMenuItem>
                             )}
                             {order.status === 'assigned' && (
                             <DropdownMenuItem className="bg-blue-500 text-white hover:!bg-blue-600 hover:!text-white focus:!bg-blue-600 focus:!text-white" onClick={() => onAssignAgent(order)}>
-                              {order.assignedAgent ? 'Change Agent' : 'Assign Agent'}
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                {order.assignedAgent ? 'Change Agent' : 'Assign Agent'}
                             </DropdownMenuItem>
                             )}
                             {order.status === 'delivered' && (
-                                <DropdownMenuItem onClick={() => onReturn(order)}>Return</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => onReturn(order)}>
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Return
+                                </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
@@ -254,6 +264,7 @@ function OrdersTable({
                                 className="text-destructive"
                                 disabled={isActionDisabled(order.status)}
                             >
+                                <XCircle className="mr-2 h-4 w-4" />
                                 Cancel Order
                             </DropdownMenuItem>
                         </DropdownMenuContent>

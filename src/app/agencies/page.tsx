@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Trash2, Loader2, ChevronDown, Filter } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Loader2, ChevronDown, Filter, Eye, Pencil } from 'lucide-react';
 import type { Agency } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -17,7 +17,7 @@ import { AddAgencyDialog } from '@/components/add-agency-dialog';
 import { EditAgencyDialog } from '@/components/edit-agency-dialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { AgencyDetailsDialog } from '@/components/agency-details-dialog';
 import { ProfileContext } from '@/context/profile-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -348,7 +348,12 @@ export default function AgenciesPage() {
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-2">
                            <Filter className="h-4 w-4"/>
-                           <span>Filter by Agency</span>
+                           <span>
+                             {selectedAgencyFilter === 'all' 
+                               ? 'Filter by Agency' 
+                               : activeAgencies.find(a => a.id === selectedAgencyFilter)?.name || 'Filter by Agency'
+                             }
+                           </span>
                            <ChevronDown className="h-4 w-4"/>
                         </Button>
                     </DropdownMenuTrigger>
@@ -427,7 +432,7 @@ export default function AgenciesPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell">{new Date(agency.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{formatDate(agency.createdAt)}</TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -437,8 +442,14 @@ export default function AgenciesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleDetailsClick(agency)}>View Details</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEditClick(agency)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDetailsClick(agency)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditClick(agency)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteClick(agency)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete

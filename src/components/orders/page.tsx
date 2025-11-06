@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MoreHorizontal, FileDown, ChevronDown, Search } from 'lucide-react';
+import { MoreHorizontal, FileDown, ChevronDown, Search, Eye, UserPlus, RotateCcw } from 'lucide-react';
 import { getOrdersData, getAgentsData } from '@/lib/data';
 import type { Order, Agent } from '@/lib/types';
 import { useEffect, useState, useMemo } from 'react';
@@ -18,7 +18,7 @@ import { OrderDetailsDialog } from '@/components/order-details-dialog';
 import { AssignAgentDialog } from '@/components/assign-agent-dialog';
 import { CancelOrderDialog } from '@/components/cancel-order-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { ReturnOrderDialog } from '@/components/return-order-dialog';
 import { Input } from '@/components/ui/input';
 
@@ -92,7 +92,7 @@ function OrdersTable({
                       <span className="text-muted-foreground">Unassigned</span>
                     )}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">₹{order.totalAmount.toLocaleString()}</TableCell>
+                  <TableCell className="hidden md:table-cell">${order.totalAmount.toLocaleString()}</TableCell>
                   <TableCell className="hidden lg:table-cell">
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -126,7 +126,7 @@ function OrdersTable({
                     </DropdownMenu>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {formatDate(order.createdAt)}
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
@@ -138,12 +138,21 @@ function OrdersTable({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onShowDetails(order)}>View Details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onShowDetails(order)}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
                         {order.status === 'Pending' && (
-                          <DropdownMenuItem onClick={() => onAssignAgent(order)}>Assign Agent</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onAssignAgent(order)}>
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Assign Agent
+                          </DropdownMenuItem>
                         )}
                         {order.status === 'Delivered' && (
-                            <DropdownMenuItem onClick={() => onReturn(order)}>Return</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onReturn(order)}>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              Return
+                            </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>

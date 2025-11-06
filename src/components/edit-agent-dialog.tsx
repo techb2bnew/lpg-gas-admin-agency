@@ -23,7 +23,7 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { X } from 'lucide-react';
-
+import { validateEmail } from '@/lib/utils';
 
 interface EditAgentDialogProps {
   agent: Agent;
@@ -34,7 +34,11 @@ interface EditAgentDialogProps {
 
 const agentSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Invalid email address." }).min(1, { message: "Email is required." }),
+  email: z.string()
+    .min(1, { message: "Email is required." })
+    .refine((email) => validateEmail(email), {
+      message: "Invalid email address format."
+    }),
   phone: z.string().length(10, { message: "Phone number must be exactly 10 digits." }),
   vehicleNumber: z.string().min(1, { message: "Vehicle details are required." }),
   panCardNumber: z.string().length(10, { message: "PAN card must be 10 characters." }),

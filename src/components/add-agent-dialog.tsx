@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { AlertCircle, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { validateEmail } from '@/lib/utils';
 
 type NewAgentPayload = Omit<Agent, 'id' | 'joinedAt' | 'createdAt' | 'status' | 'report' | 'currentLocation' | 'updatedAt' | 'vehicleDetails' | 'panCard' | 'aadharCard' | 'drivingLicense' | 'accountDetails' | 'profileImage'>;
 
@@ -37,7 +38,11 @@ interface AddAgentDialogProps {
 
 const createAgentSchema = (isAdmin: boolean) => z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Invalid email address." }).min(1, { message: "Email is required." }),
+  email: z.string()
+    .min(1, { message: "Email is required." })
+    .refine((email) => validateEmail(email), {
+      message: "Invalid email address format."
+    }),
   phone: z.string().length(10, { message: "Phone number must be exactly 10 digits." }),
   vehicleNumber: z.string().min(1, { message: "Vehicle details are required." }),
   panCardNumber: z.string().length(10, { message: "PAN card must be 10 characters." }),

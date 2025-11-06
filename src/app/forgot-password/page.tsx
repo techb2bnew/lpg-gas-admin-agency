@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/forgot-password/1200/900"
+          src="/sideimage.jpg"
           alt="Forgot password"
           width="1200"
           height="900"

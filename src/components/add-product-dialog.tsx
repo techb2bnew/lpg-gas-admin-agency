@@ -40,7 +40,7 @@ interface AddProductDialogProps {
 
 const variantSchema = z.object({
   value: z.coerce.number().min(0.01, "Value is required and must be greater than 0."),
-  unit: z.enum(['kg', 'meter']),
+  unit: z.enum(['Lbs', 'meter']),
   price: z.coerce.number().min(0.01, "Base price is required and must be greater than 0."),
 });
 
@@ -71,7 +71,7 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
       description: '',
       category: '',
       lowStockThreshold: 10,
-      variants: [{ value: '' as any, unit: 'kg', price: '' as any }],
+      variants: [{ value: '' as any, unit: 'Lbs', price: '' as any }],
       tags: [],
     }
   });
@@ -87,7 +87,7 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
         description: '',
         category: '',
         lowStockThreshold: 10,
-        variants: [{ value: '' as any, unit: 'kg', price: '' as any }],
+        variants: [{ value: '' as any, unit: 'Lbs', price: '' as any }],
         tags: [],
     });
     setImageFiles([]);
@@ -198,14 +198,14 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
                                   <div key={field.id} className="flex items-start gap-2 p-3 border rounded-md relative">
                                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                                           <FormField control={form.control} name={`variants.${index}.value`} render={({ field }) => (<FormItem><FormLabel>Value <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="e.g. 14.2" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="kg">kg</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Base Price (₹) <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="1100" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Base Price ($) <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="1100" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                       </div>
                                       <Button type="button" variant="ghost" size="icon" className="shrink-0 mt-8 -mr-1" onClick={() => remove(index)} disabled={fields.length <= 1}><Trash2 className="h-4 w-4 text-destructive"/></Button>
                                   </div>
                               ))}
                           </div>
-                          <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => append({ value: '' as any, unit: 'kg', price: '' as any })}><PlusCircle className="mr-2 h-4 w-4"/>Add Variant</Button>
+                          <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => append({ value: '' as any, unit: 'Lbs', price: '' as any })}><PlusCircle className="mr-2 h-4 w-4"/>Add Variant</Button>
                           <FormMessage>{form.formState.errors.variants?.message || form.formState.errors.variants?.root?.message}</FormMessage>
                       </div>
 

@@ -8,7 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, FileDown, Loader2 } from 'lucide-react';
+import { MoreHorizontal, FileDown, Loader2, Eye, Ban, CheckCircle } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 import type { User } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState, useMemo } from 'react';
@@ -240,7 +241,7 @@ export default function CustomersPage() {
                       <TableCell className="hidden sm:table-cell">
                         <Badge variant={user.status === 'Active' ? 'secondary' : 'destructive'}>{user.status}</Badge>
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell">{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{formatDate(user.createdAt)}</TableCell>
                       <TableCell onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -250,11 +251,20 @@ export default function CustomersPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleShowDetails(user)}>View Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShowDetails(user)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Details
+                            </DropdownMenuItem>
                             {user.status === 'Active' ? (
-                              <DropdownMenuItem className="text-destructive" onClick={() => handleAction(user, 'Block')}>Block</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive" onClick={() => handleAction(user, 'Block')}>
+                                <Ban className="mr-2 h-4 w-4" />
+                                Block
+                              </DropdownMenuItem>
                             ) : (
-                              <DropdownMenuItem onClick={() => handleAction(user, 'Unblock')}>Unblock</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleAction(user, 'Unblock')}>
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                Unblock
+                              </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
                         </DropdownMenu>

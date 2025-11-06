@@ -31,7 +31,7 @@ export interface User {
 export interface ProductVariant {
   label: string; // e.g., '14.2kg', '5kg'
   value: number;
-  unit: 'kg' | 'meter';
+  unit: 'Lbs' | 'meter';
   price: number;
   stock: number;
 }

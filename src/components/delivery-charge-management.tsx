@@ -404,10 +404,10 @@ export function DeliveryChargeManagement() {
             <div className="space-y-4">
               {chargeType === 'per_km' ? (
                 <div className="space-y-2">
-                  <Label htmlFor="rate-per-km">Rate per Kilometer (₹)</Label>
+                  <Label htmlFor="rate-per-km">Rate per Kilometer ($)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      ₹
+                      $
                     </span>
                     <Input
                       id="rate-per-km"
@@ -421,15 +421,15 @@ export function DeliveryChargeManagement() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: ₹5 per km means ₹50 charge for 10 km delivery
+                    Example: $5 per km means $50 charge for 10 km delivery
                   </p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="fixed-amount">Fixed Delivery Charge (₹)</Label>
+                  <Label htmlFor="fixed-amount">Fixed Delivery Charge ($)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      ₹
+                      $
                     </span>
                     <Input
                       id="fixed-amount"
@@ -443,7 +443,7 @@ export function DeliveryChargeManagement() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: ₹50 means ₹50 delivery charge for all orders
+                    Example: $50 means $50 delivery charge for all orders
                   </p>
                 </div>
               )}

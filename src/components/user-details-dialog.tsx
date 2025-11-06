@@ -13,6 +13,7 @@ import type { User, UserAddress } from '@/lib/types';
 import { Mail, Phone, MapPin, Calendar, User as UserIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
+import { formatDate } from '@/lib/utils';
 import { Button } from './ui/button';
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -72,7 +73,7 @@ export function UserDetailsDialog({ user, isOpen, onOpenChange }: UserDetailsDia
             <div>
                 <DialogTitle className="text-2xl">{user.name}</DialogTitle>
                 <DialogDescription>
-                    Customer since {new Date(user.createdAt).toLocaleDateString()}
+                    Customer since {formatDate(user.createdAt)}
                 </DialogDescription>
             </div>
           </div>

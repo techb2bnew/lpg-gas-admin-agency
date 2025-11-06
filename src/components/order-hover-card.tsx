@@ -60,7 +60,7 @@ export function OrderHoverCard({ children }: { children: React.ReactNode }) {
               <div key={order.id} className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-medium">#{order.id.slice(0, 6)} - {order.customerName}</p>
-                  <p className="text-sm text-muted-foreground">₹{order.totalAmount.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">${order.totalAmount.toLocaleString()}</p>
                 </div>
                 <Badge variant={statusVariant[order.status]}>{order.status}</Badge>
               </div>

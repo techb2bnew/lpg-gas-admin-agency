@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { useState } from 'react';
+import { validateEmail } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 
 type NewUser = Omit<User, 'id' | 'createdAt' | 'status' | 'orderHistory' | 'location' | 'address'>;
@@ -30,7 +31,11 @@ interface AddUserDialogProps {
 
 const userSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Invalid email address." }).min(1, { message: "Email is required." }),
+  email: z.string()
+    .min(1, { message: "Email is required." })
+    .refine((email) => validateEmail(email), {
+      message: "Invalid email address format."
+    }),
   phone: z.string().min(10, { message: "Phone number must be at least 10 digits." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });

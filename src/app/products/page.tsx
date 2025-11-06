@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, AlertCircle, Loader2, Trash2, Settings, PackagePlus, ChevronDown } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, AlertCircle, Loader2, Trash2, Settings, PackagePlus, ChevronDown, Eye, Pencil, Building2 } from 'lucide-react';
 import type { Product, AgencyInventory } from '@/lib/types';
 import { useEffect, useState, useMemo, useCallback, useContext } from 'react';
 import { EditProductDialog } from '@/components/edit-product-dialog';
@@ -675,13 +675,20 @@ export default function ProductsPage() {
                           </DropdownMenuTrigger>
                            <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/products/${product.id}`}>View Details</Link>
+                              <Link href={`/products/${product.id}`} className="flex items-center">
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             {isAdmin ? (
                               <>
-                                <DropdownMenuItem onClick={() => handleEdit(product)}>Edit Product</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEdit(product)}>
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit Product
+                                </DropdownMenuItem>
                                 <DropdownMenuItem>
-                                  <Link href={`/products/${product.id}/agencies`} className="w-full">
+                                  <Link href={`/products/${product.id}/agencies`} className="w-full flex items-center">
+                                    <Building2 className="mr-2 h-4 w-4" />
                                     View in Agencies
                                   </Link>
                                 </DropdownMenuItem>
@@ -692,8 +699,17 @@ export default function ProductsPage() {
                               </>
                             ) : (
                                <DropdownMenuItem onClick={() => handleManageInventory(product)}>
-                                {!!agencyInventory ? <Settings className="mr-2 h-4 w-4" /> : <PackagePlus className="mr-2 h-4 w-4" />}
-                                {!!agencyInventory ? 'Manage Inventory' : 'Add to My Inventory'}
+                                {!!agencyInventory ? (
+                                  <>
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    Manage Inventory
+                                  </>
+                                ) : (
+                                  <>
+                                    <PackagePlus className="mr-2 h-4 w-4" />
+                                    Add to My Inventory
+                                  </>
+                                )}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>

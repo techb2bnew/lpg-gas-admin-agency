@@ -287,9 +287,9 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                            <p className="text-xs text-muted-foreground">quantity</p>
                         </div>
                         <div className="text-right">
-                           <p className="font-medium">₹{item.total.toLocaleString()}</p>
+                           <p className="font-medium">${item.total.toLocaleString()}</p>
                            <p className="text-xs text-muted-foreground">
-                                @ ₹{item.variantPrice.toLocaleString()}
+                                @ ${item.variantPrice.toLocaleString()}
                            </p>
                         </div>
                     </div>
@@ -308,7 +308,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                 {order.taxAmount && parseFloat(order.taxAmount) > 0 && (
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">
-                            Tax ({order.taxType === 'percentage' ? `${order.taxValue}%` : `₹${order.taxValue}`})
+                            Tax ({order.taxType === 'percentage' ? `${order.taxValue}%` : `$${order.taxValue}`})
                         </span>
                         <span className="flex items-center"><IndianRupee className="h-4 w-4" />{parseFloat(order.taxAmount).toLocaleString()}</span>
                     </div>

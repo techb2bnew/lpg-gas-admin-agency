@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { ProfileContext } from '@/context/profile-context';
 import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { EditProductDialog } from '@/components/edit-product-dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ImageViewerDialog } from '@/components/image-viewer-dialog';
@@ -448,8 +448,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       </div>
                     </div>
                   )}
-                  <p className="text-sm"><span className="font-medium">Created:</span> {new Date(product.createdAt).toLocaleDateString()}</p>
-                  <p className="text-sm"><span className="font-medium">Updated:</span> {new Date(product.updatedAt).toLocaleDateString()}</p>
+                  <p className="text-sm"><span className="font-medium">Created:</span> {formatDate(product.createdAt)}</p>
+                  <p className="text-sm"><span className="font-medium">Updated:</span> {formatDate(product.updatedAt)}</p>
                 </div>
               </div>
 
@@ -512,7 +512,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{variant.label}</TableCell>
-                      <TableCell>₹{variant.price}</TableCell>
+                      <TableCell>${variant.price}</TableCell>
                       <TableCell>{variant.unit}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -662,7 +662,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`variant-${index}-price`}>Price (₹)</Label>
+                    <Label htmlFor={`variant-${index}-price`}>Price ($)</Label>
                     <Input
                       id={`variant-${index}-price`}
                       type="number"

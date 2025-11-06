@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Loader2, ArrowLeft, Phone, Mail, MapPin, Calendar, Package, Truck, DollarSign, AlertCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -193,7 +193,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Total Amount</p>
-                  <p className="font-bold text-lg">₹{parseFloat(order.totalAmount).toLocaleString()}</p>
+                  <p className="font-bold text-lg">${parseFloat(order.totalAmount).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Payment Method</p>
@@ -266,7 +266,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                     </div>
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>Joined {new Date(order.deliveryAgent.joinedAt).toLocaleDateString()}</span>
+                      <span>Joined {formatDate(order.deliveryAgent.joinedAt)}</span>
                     </div>
                   </div>
 
@@ -316,9 +316,9 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                       <p className="text-sm text-muted-foreground">Variant: {item.variantLabel}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">₹{item.variantPrice.toLocaleString()}</p>
+                      <p className="font-semibold">${item.variantPrice.toLocaleString()}</p>
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                      <p className="text-sm font-medium">Total: ₹{item.total.toLocaleString()}</p>
+                      <p className="text-sm font-medium">Total: ${item.total.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -574,7 +574,7 @@ export default function CustomerDetailsPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4" />
-                  <span>Joined {new Date(customer.createdAt).toLocaleDateString()}</span>
+                  <span>Joined {formatDate(customer.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -682,7 +682,7 @@ export default function CustomerDetailsPage() {
                             {order.status.replace('_', ' ')}
                           </Badge>
                         </TableCell>
-                        <TableCell>₹{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                        <TableCell>${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                         <TableCell className="capitalize">
                           {order.paymentMethod ? order.paymentMethod.replace('_', ' ') : 'Not specified'}
                         </TableCell>
@@ -695,10 +695,10 @@ export default function CustomerDetailsPage() {
                           {order.deliveryMode ? order.deliveryMode.replace('_', ' ') : 'Not specified'}
                         </TableCell>
                         <TableCell>
-                          {new Date(order.createdAt).toLocaleDateString()}
+                          {formatDate(order.createdAt)}
                         </TableCell>
                         <TableCell>
-                          {order.assignedAt ? new Date(order.assignedAt).toLocaleDateString() : 'Not assigned'}
+                          {order.assignedAt ? formatDate(order.assignedAt) : 'Not assigned'}
                         </TableCell>
                         <TableCell>
                           {order.deliveryAgent ? (

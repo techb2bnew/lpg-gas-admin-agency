@@ -14,7 +14,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { AddTermsDialog } from '@/components/add-terms-dialog';
 import { EditTermsDialog } from '@/components/edit-terms-dialog';
 import { log } from 'console';
@@ -263,7 +263,7 @@ export default function TermsPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell">{new Date(term.updatedAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{formatDate(term.updatedAt)}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

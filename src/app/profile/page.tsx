@@ -25,9 +25,21 @@ export default function ProfilePage() {
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [randomLetter, setRandomLetter] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Generate a random letter when name is empty
+  useEffect(() => {
+    if (!name || name.trim() === '') {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const random = letters[Math.floor(Math.random() * letters.length)];
+      setRandomLetter(random);
+    } else {
+      setRandomLetter('');
+    }
+  }, [name]);
 
   useEffect(() => {
     if (!isFetchingProfile) {
@@ -145,7 +157,9 @@ export default function ProfilePage() {
             <div className="relative">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={displayPhotoUrl} alt="@admin" data-ai-hint="manager portrait"/>
-                <AvatarFallback>{name?.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>
+                  {name && name.trim() ? name.charAt(0).toUpperCase() : randomLetter}
+                </AvatarFallback>
               </Avatar>
               {displayPhotoUrl && (
                 <button
@@ -170,11 +184,23 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name <span className="text-red-500">*</span></Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={isSaving} />
+              <Input 
+                id="name" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                disabled={isSaving}
+                placeholder="Enter your full name"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" value={email} disabled />
+              <Input 
+                id="email" 
+                type="email" 
+                value={email} 
+                disabled
+                placeholder="Enter your email address"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number <span className="text-red-500">*</span></Label>

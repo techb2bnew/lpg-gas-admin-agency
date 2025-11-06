@@ -41,7 +41,7 @@ export function PlatformChargeManagement() {
       
       toast({
         title: "Platform Charge Updated",
-        description: `Platform charge is now ₹${chargeData.amount}`,
+        description: `Platform charge is now $${chargeData.amount}`,
       });
     };
 
@@ -287,10 +287,10 @@ export function PlatformChargeManagement() {
 
             {/* Platform Charge Input */}
             <div className="space-y-2">
-              <Label htmlFor="platform-charge-input">Platform Charge Amount (₹)</Label>
+              <Label htmlFor="platform-charge-input">Platform Charge Amount ($)</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                  ₹
+                  $
                 </span>
                 <Input
                   id="platform-charge-input"
@@ -304,7 +304,7 @@ export function PlatformChargeManagement() {
                 />
               </div>
               <p className="text-sm text-muted-foreground">
-                Example: ₹50 means ₹50 platform charge on every order
+                Example: $50 means $50 platform charge on every order
               </p>
             </div>
 

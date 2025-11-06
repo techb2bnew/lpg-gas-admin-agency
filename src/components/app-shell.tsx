@@ -70,7 +70,7 @@ const allNavItems = [
   { href: '/agencies', label: 'Agencies', icon: Building2, roles: ['admin', 'super_admin'] },
   { href: '/terms-and-conditions', label: 'Terms & Conditions', icon: FileText, roles: ['admin', 'super_admin'] },
   { href: '/privacy-policy', label: 'Privacy Policy', icon: ShieldCheck, roles: ['admin', 'super_admin'] },
-  { href: '/payments', label: 'Payments', icon: CreditCard },
+  // { href: '/payments', label: 'Payments', icon: CreditCard },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -159,7 +159,7 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
           key={href}
           href={href}
           className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-[#000]',
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all',
             pathname === href && 'bg-[#035db7] text-[#fff]'
           )}
         >

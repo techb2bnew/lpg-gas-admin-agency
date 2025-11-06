@@ -21,6 +21,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { X, MapPin } from 'lucide-react';
 import { loadGooglePlaces, createAutocomplete, parsePlace, createMap, addMapClickListener, reverseGeocode } from '@/hooks/use-google-places';
+import { validateEmail } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -33,7 +34,11 @@ interface EditAgencyDialogProps {
 
 const agencySchema = z.object({
   name: z.string().min(1, "Name is required."),
-  email: z.string().email("Invalid email address.").min(1, "Email is required."),
+  email: z.string()
+    .min(1, "Email is required.")
+    .refine((email) => validateEmail(email), {
+      message: "Invalid email address format."
+    }),
   phone: z.string().length(10, "Phone number must be exactly 10 digits."),
   addressTitle: z.string().min(1, "Address title is required."),
   address: z.string().min(1, "Address is required."),

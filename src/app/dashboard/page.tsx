@@ -21,6 +21,7 @@ import { OrderStatusChart } from '@/components/order-status-chart';
 import { ProfileContext } from '@/context/profile-context';
 import { useNotifications } from '@/context/notification-context';
 import { useSocket } from '@/context/socket-context';
+import { formatDate } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const RECENT_ORDERS_PER_PAGE = 5;
@@ -365,9 +366,9 @@ export default function DashboardPage() {
                            <Badge variant={statusVariant[order.status.replace('_', '-')] || 'secondary'} className="capitalize">{order.status.replace('_', ' ')}</Badge>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell py-2">
-                          {new Date(order.createdAt).toLocaleDateString()}
+                          {formatDate(order.createdAt)}
                         </TableCell>
-                        <TableCell className="text-right py-2">₹{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                        <TableCell className="text-right py-2">${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
