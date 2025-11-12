@@ -401,13 +401,20 @@ export default function AgenciesPage() {
                       <div>{agency.phone}</div>
                       <div className="text-sm text-muted-foreground">{agency.email}</div>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell max-w-[600px]">{`${agency.address}, ${agency.landmark ? agency.landmark + ', ' : ''}${agency.city}, ${agency.pincode}`}</TableCell>
+                    <TableCell className="hidden md:table-cell max-w-[320px]">
+                      <div
+                        className="truncate text-sm text-muted-foreground"
+                        title={`${agency.address}, ${agency.landmark ? agency.landmark + ', ' : ''}${agency.city}, ${agency.pincode}`}
+                      >
+                        {`${agency.address}, ${agency.landmark ? agency.landmark + ', ' : ''}${agency.city}, ${agency.pincode}`}
+                      </div>
+                    </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                        <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="w-28 justify-between capitalize">
                                 <span className={cn({
-                                    'text-green-600': agency.status === 'active',
+                                    'text-primary': agency.status === 'active',
                                     'text-gray-500': agency.status === 'inactive'
                                 })}>
                                     {agency.status}

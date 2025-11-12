@@ -316,7 +316,7 @@ export function DeliveryChargeManagement() {
           <MapPin className="h-5 w-5" />
           Delivery Charge Management
           {deliveryCharge && (
-            <span className="text-sm font-normal text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <span className="text-sm font-normal text-primary bg-primary/10 px-2 py-1 rounded-full">
               Configured
             </span>
           )}

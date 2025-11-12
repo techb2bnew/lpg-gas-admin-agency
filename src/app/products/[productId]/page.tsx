@@ -467,7 +467,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   <div className="space-y-1">
                     {agencyInventory ? (
                       <>
-                        <p className="text-sm text-green-600">In My Inventory</p>
+                        <p className="text-sm text-primary">In My Inventory</p>
                         <p className="text-sm text-muted-foreground">
                           Status: {agencyInventory.isActive ? 'Active' : 'Inactive'}
                         </p>

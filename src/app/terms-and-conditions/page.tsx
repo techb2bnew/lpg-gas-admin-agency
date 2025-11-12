@@ -248,7 +248,7 @@ export default function TermsPage() {
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="w-28 justify-between capitalize" onClick={(e) => e.stopPropagation()}>
                                 <span className={cn({
-                                    'text-green-600': term.status === 'active',
+                                    'text-primary': term.status === 'active',
                                     'text-gray-500': term.status === 'inactive'
                                 })}>
                                     {term.status}

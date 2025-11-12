@@ -247,7 +247,7 @@ export default function PrivacyPolicyPage() {
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="w-28 justify-between capitalize" onClick={(e) => e.stopPropagation()}>
                                 <span className={cn({
-                                    'text-green-600': policy.status === 'active',
+                                    'text-primary': policy.status === 'active',
                                     'text-gray-500': policy.status === 'inactive'
                                 })}>
                                     {policy.status}

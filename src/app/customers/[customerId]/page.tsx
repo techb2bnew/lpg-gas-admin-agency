@@ -147,7 +147,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'delivered':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-primary" />;
       case 'cancelled':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'pending':
@@ -159,7 +159,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
 
   const getPaymentStatusIcon = (received: boolean) => {
     return received ? 
-      <CheckCircle className="h-4 w-4 text-green-500" /> : 
+      <CheckCircle className="h-4 w-4 text-primary" /> : 
       <XCircle className="h-4 w-4 text-red-500" />;
   };
 
@@ -348,7 +348,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                 {order.confirmedAt && (
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Order Confirmed</p>
@@ -390,7 +390,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                 {order.deliveredAt && (
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
-                      <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Delivered</p>
@@ -599,7 +599,7 @@ export default function CustomerDetailsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center space-x-2">
-              <Truck className="h-5 w-5 text-green-500" />
+              <Truck className="h-5 w-5 text-primary" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Completed</p>
                 <p className="text-2xl font-bold">{statistics.completedOrders}</p>

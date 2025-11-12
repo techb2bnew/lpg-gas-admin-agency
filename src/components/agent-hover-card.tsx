@@ -47,7 +47,7 @@ export function AgentHoverCard({ children }: { children: React.ReactNode }) {
         <p className="text-sm font-medium">{agent.name}</p>
         <p className="text-sm text-muted-foreground">{agent.vehicleNumber}</p>
       </div>
-      <Badge variant={agent.status.toLowerCase() === 'online' ? 'default' : 'outline'} className={agent.status.toLowerCase() === 'online' ? 'bg-green-500 text-white' : ''}>
+      <Badge variant={agent.status.toLowerCase() === 'online' ? 'default' : 'outline'} className={agent.status.toLowerCase() === 'online' ? 'bg-primary text-primary-foreground' : ''}>
         <span className={`inline-block w-2 h-2 mr-2 rounded-full ${agent.status.toLowerCase() === 'online' ? 'bg-white' : 'bg-gray-400'}`}></span>
         {agent.status}
       </Badge>
@@ -61,7 +61,7 @@ export function AgentHoverCard({ children }: { children: React.ReactNode }) {
         <ScrollArea className="h-64">
           <div className="space-y-4">
             <div>
-              <h4 className="font-semibold mb-2 text-green-600">Online Agents</h4>
+              <h4 className="font-semibold mb-2 text-primary">Online Agents</h4>
               {onlineAgents.length > 0 ? (
                 <div className="space-y-4">
                   {onlineAgents.map(agent => <AgentRow key={agent.id} agent={agent} />)}

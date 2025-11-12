@@ -32,6 +32,7 @@ import { format } from 'date-fns';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const ITEMS_PER_PAGE = 10;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -166,7 +167,7 @@ function OrdersTable({
                                 onCheckedChange={(checked) => onPaymentReceivedToggle(order, checked)}
                                 disabled={!!updatingOrderId && updatingOrderId === order.id}
                               />
-                              <Label htmlFor={`payment-${order.id}`} className={cn(order.paymentReceived ? "text-green-600" : "text-destructive")}>
+                              <Label htmlFor={`payment-${order.id}`} className={cn(order.paymentReceived ? "text-primary" : "text-destructive")}>
                                 {order.paymentReceived ? 'Paid' : 'Unpaid'}
                               </Label>
                           </div>
@@ -241,7 +242,7 @@ function OrdersTable({
                                 View Details
                             </DropdownMenuItem>
                             {(order.status === 'confirmed' && order.deliveryMode !== 'pickup') && (
-                            <DropdownMenuItem className="bg-green-500 text-white hover:!bg-green-600 hover:!text-white focus:!bg-green-600 focus:!text-white" onClick={() => onAssignAgent(order)}>
+                            <DropdownMenuItem className="bg-primary text-primary-foreground hover:!bg-primary/90 hover:!text-primary-foreground focus:!bg-primary/90 focus:!text-primary-foreground" onClick={() => onAssignAgent(order)}>
                                 <UserPlus className="mr-2 h-4 w-4" />
                                 Assign Agent
                             </DropdownMenuItem>
@@ -337,6 +338,9 @@ function OrdersPageContent() {
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
+  const [pendingPickupDeliveryOrder, setPendingPickupDeliveryOrder] = useState<Order | null>(null);
+  const [isPickupConfirmModalOpen, setIsPickupConfirmModalOpen] = useState(false);
+  const [isProcessingPickupDelivery, setIsProcessingPickupDelivery] = useState(false);
 
 
   const fetchOrders = useCallback(async (page = 1, status = activeTab, search = searchTerm, start?: Date, end?: Date) => {
@@ -658,6 +662,16 @@ function OrdersPageContent() {
       handleCancelOrder(order);
       return;
     }
+
+    if (
+      order.deliveryMode === 'pickup' &&
+      order.status === 'pending' &&
+      newStatus === 'delivered'
+    ) {
+      setPendingPickupDeliveryOrder(order);
+      setIsPickupConfirmModalOpen(true);
+      return;
+    }
     
     let notes;
     if (newStatus === 'confirmed') {
@@ -708,6 +722,29 @@ function OrdersPageContent() {
       toast({ variant: 'destructive', title: 'Error', description: 'An unexpected error occurred.' });
     } finally {
       setUpdatingOrderId(null);
+    }
+  };
+
+  const handleConfirmPickupBeforeDelivery = async () => {
+    if (!pendingPickupDeliveryOrder) return;
+    setIsProcessingPickupDelivery(true);
+    const order = pendingPickupDeliveryOrder;
+    const confirmed = await updateOrderStatus(order, 'confirmed', 'Order confirmed for pickup');
+    if (confirmed) {
+      toast({
+        title: 'Order Confirmed',
+        description: 'The pickup order has been confirmed.',
+      });
+      setIsPickupConfirmModalOpen(false);
+      setPendingPickupDeliveryOrder(null);
+    }
+    setIsProcessingPickupDelivery(false);
+  };
+
+  const handlePickupModalOpenChange = (open: boolean) => {
+    setIsPickupConfirmModalOpen(open);
+    if (!open) {
+      setPendingPickupDeliveryOrder(null);
     }
   };
 
@@ -765,7 +802,7 @@ function OrdersPageContent() {
         <div className="flex items-center gap-2">
           {/* Socket Connection Status */}
           <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-muted">
-            <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-green-500" : "bg-red-500")} />
+            <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-primary" : "bg-red-500")} />
             <span className="text-xs text-muted-foreground">
               {isConnected ? "Live" : "Offline"}
             </span>
@@ -883,6 +920,35 @@ function OrdersPageContent() {
       {selectedOrder && <AssignAgentDialog order={selectedOrder} isOpen={isAssignOpen} onOpenChange={setIsAssignOpen} onAgentAssigned={handleAgentAssigned} initialAgents={agents} />}
       {selectedOrder && <CancelOrderDialog order={selectedOrder} isOpen={isCancelOpen} onOpenChange={setIsCancelOpen} onConfirm={confirmCancelOrder} />}
       {selectedOrder && <ReturnOrderDialog order={selectedOrder} isOpen={isReturnOpen} onOpenChange={setIsReturnOpen} onConfirm={confirmReturnOrder} />}
+      <Dialog open={isPickupConfirmModalOpen} onOpenChange={handlePickupModalOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Pickup Order First</DialogTitle>
+            <DialogDescription>
+              This pickup order is still pending. Please confirm the order before marking it as delivered.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-2">
+            <Button
+              variant="outline"
+              onClick={() => handlePickupModalOpenChange(false)}
+              disabled={isProcessingPickupDelivery}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmPickupBeforeDelivery} disabled={isProcessingPickupDelivery}>
+              {isProcessingPickupDelivery ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                'Confirm Order'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </AppShell>
   );

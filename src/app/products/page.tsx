@@ -516,7 +516,7 @@ export default function ProductsPage() {
         <div className="flex items-center gap-2">
           {/* Socket Connection Status */}
           <div className="flex items-center gap-2 px-2 py-1 rounded-md bg-muted">
-            <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-green-500" : "bg-red-500")} />
+            <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-primary" : "bg-red-500")} />
             <span className="text-xs text-muted-foreground">
               {isConnected ? "Live" : "Offline"}
             </span>
@@ -605,7 +605,7 @@ export default function ProductsPage() {
                                     <DropdownMenuTrigger asChild>
                                       <Button variant="outline" size="sm" className={cn("w-28 justify-between capitalize", { 
                                           'bg-destructive text-destructive-foreground hover:bg-destructive/90': product.status === 'inactive',
-                                          'bg-green-600 text-white hover:bg-green-600/90': product.status === 'active'
+                                          'bg-primary text-primary-foreground hover:bg-primary/90': product.status === 'active'
                                         })}>
                                             <span>
                                                 {product.status}
@@ -630,7 +630,7 @@ export default function ProductsPage() {
                                       <DropdownMenuTrigger asChild>
                                         <Button variant="outline" size="sm" className={cn("w-28 justify-between capitalize", {
                                           'bg-destructive text-destructive-foreground hover:bg-destructive/90': !agencyInventory.isActive,
-                                          'bg-green-600 text-white hover:bg-green-600/90': agencyInventory.isActive && totalStock > 0,
+                                          'bg-primary text-primary-foreground hover:bg-primary/90': agencyInventory.isActive && totalStock > 0,
                                           'bg-orange-600 text-white hover:bg-orange-600/90': agencyInventory.isActive && totalStock === 0
                                         })}>
                                             <span>
@@ -649,7 +649,7 @@ export default function ProductsPage() {
                                     <Badge variant='outline'>Not In Inventory</Badge>
                                   )}
                                    <p className={cn('text-xs mt-1', {
-                                     'text-green-600': agencyInventory && agencyInventory.isActive && totalStock > 0,
+                                     'text-primary': agencyInventory && agencyInventory.isActive && totalStock > 0,
                                      'text-orange-600': agencyInventory && agencyInventory.isActive && totalStock === 0,
                                      'text-red-600': agencyInventory && !agencyInventory.isActive,
                                      'text-gray-500': !agencyInventory

@@ -254,7 +254,7 @@ export function PlatformChargeManagement() {
         <CardTitle className="flex items-center gap-2">
           Platform Charge Management
           {hasPlatformCharge && (
-            <span className="text-sm font-normal text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <span className="text-sm font-normal text-primary bg-primary/10 px-2 py-1 rounded-full">
               Configured
             </span>
           )}

@@ -67,6 +67,7 @@ export default function AgentsPage() {
   const { handleApiError } = useAuth();
   const { profile } = useContext(ProfileContext);
   const isAdmin = profile.role === 'admin' || profile.role === 'super_admin';
+  const isAgencyOwner = profile.role === 'agency_owner';
   const { socket } = useNotifications();
   const router = useRouter();
 
@@ -431,7 +432,7 @@ export default function AgentsPage() {
             </span>
           </Button>
         ) : (
-            isAdmin && agencies.length > 0 && (
+            ((isAdmin && agencies.length > 0) || isAgencyOwner) && (
               <Button size="sm" className="h-8 gap-1" onClick={() => setIsAddDialogOpen(true)}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -515,7 +516,7 @@ export default function AgentsPage() {
                               <a href={`tel:${agent.phone}`} onClick={(e) => e.stopPropagation()} className="hover:underline flex items-center gap-1">
                                   {agent.phone}
                               </a>
-                              <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500 hover:text-green-600 -ml-2" onClick={(e) => handleWhatsAppClick(e, agent.phone)}>
+                               <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-primary-foreground -ml-2" onClick={(e) => handleWhatsAppClick(e, agent.phone)}>
                                   <WhatsAppIcon className="h-4 w-4" />
                               </Button>
                           </div>
@@ -531,11 +532,16 @@ export default function AgentsPage() {
                           <div className="text-muted-foreground">{agent.Agency.email}</div>
                           <div className="text-muted-foreground">{agent.Agency.phone}</div>
                           <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-24 justify-between capitalize mt-2 h-7 rounded-full px-3" onClick={(e) => e.stopPropagation()}>
+                             <DropdownMenuTrigger asChild>
+                                 <Button
+                                   variant="outline"
+                                   size="sm"
+                                   className="group w-24 justify-between capitalize mt-2 h-7 rounded-full px-3"
+                                   onClick={(e) => e.stopPropagation()}
+                                 >
                                     <span className={cn({
-                                        'text-green-600': agent.Agency.status === 'active',
-                                        'text-destructive': agent.Agency.status === 'inactive'
+                                         'text-primary group-hover:text-primary-foreground': agent.Agency.status === 'active',
+                                         'text-destructive group-hover:text-destructive-foreground': agent.Agency.status === 'inactive'
                                     })}>
                                         {agent.Agency.status}
                                     </span>
@@ -566,7 +572,7 @@ export default function AgentsPage() {
                   )}
                   <TableCell onClick={() => handleViewReport(agent)} className="hidden sm:table-cell">{agent.vehicleNumber}</TableCell>
                   <TableCell onClick={() => handleViewReport(agent)} className="hidden md:table-cell">
-                    <Badge variant={agent.status.toLowerCase() === 'online' ? 'default' : 'outline'} className={agent.status.toLowerCase() === 'online' ? 'bg-green-500 text-white' : ''}>
+                    <Badge variant={agent.status.toLowerCase() === 'online' ? 'default' : 'outline'} className={agent.status.toLowerCase() === 'online' ? 'bg-primary text-primary-foreground' : ''}>
                       <span className={`inline-block w-2 h-2 mr-2 rounded-full ${agent.status.toLowerCase() === 'online' ? 'bg-white' : 'bg-gray-400'}`}></span>
                       {agent.status}
                     </Badge>

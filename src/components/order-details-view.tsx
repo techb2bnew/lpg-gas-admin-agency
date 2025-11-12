@@ -229,9 +229,9 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                         <span>{new Date(order.returnedAt).toLocaleString()}</span>
                     </div>
                 )}
-                <div className="flex justify-between items-center bg-green-100 dark:bg-green-900/20 p-2 rounded-md">
-                    <span className="text-green-800 dark:text-green-300 font-medium flex items-center gap-2"><Wallet className="h-4 w-4"/>Payment</span>
-                    <span className="capitalize font-medium text-green-800 dark:text-green-300">{order.paymentMethod.replace('_', ' ')} ({order.paymentStatus})</span>
+                <div className="flex justify-between items-center bg-primary/10 dark:bg-primary/20 p-2 rounded-md">
+                    <span className="text-primary dark:text-primary/80 font-medium flex items-center gap-2"><Wallet className="h-4 w-4"/>Payment</span>
+                    <span className="capitalize font-medium text-primary dark:text-primary/80">{order.paymentMethod.replace('_', ' ')} ({order.paymentStatus})</span>
                 </div>
                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground flex items-center gap-2"><Truck className="h-4 w-4"/>Delivery Mode</span>
@@ -330,7 +330,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                 {order.couponCode && order.couponDiscount && parseFloat(order.couponDiscount) > 0 && (
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Coupon Discount ({order.couponCode})</span>
-                        <span className="flex items-center text-green-600"><IndianRupee className="h-4 w-4" />-{parseFloat(order.couponDiscount).toLocaleString()}</span>
+                        <span className="flex items-center text-primary"><IndianRupee className="h-4 w-4" />-{parseFloat(order.couponDiscount).toLocaleString()}</span>
                     </div>
                 )}
             </div>
@@ -343,8 +343,8 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
             </div>
         </div>
          {order.status === 'delivered' && (
-              <div className="p-4 rounded-lg border bg-green-50 dark:bg-green-900/30">
-                  <h3 className="font-semibold mb-3 text-green-800 dark:text-green-200 flex items-center gap-2"><CheckCircle className="h-5 w-5"/> Delivery Details</h3>
+              <div className="p-4 rounded-lg border bg-primary/10 dark:bg-primary/20">
+                  <h3 className="font-semibold mb-3 text-primary dark:text-primary/80 flex items-center gap-2"><CheckCircle className="h-5 w-5"/> Delivery Details</h3>
                   <div className="space-y-3 text-sm">
                       <div className="flex items-center justify-between">
                           <span className="text-muted-foreground flex items-center gap-2"><Banknote className="h-4 w-4"/>Payment Received</span>
@@ -384,7 +384,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                         <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                             <Phone className="h-3 w-3"/>
                             <a href={`tel:${order.customerPhone}`} className="hover:underline">{order.customerPhone}</a>
-                             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500 hover:text-green-600 -ml-1" onClick={() => handleWhatsAppClick(order.customerPhone)}>
+                             <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-primary-foreground -ml-1" onClick={() => handleWhatsAppClick(order.customerPhone)}>
                                 <WhatsAppIcon className="h-4 w-4" />
                             </Button>
                         </div>
@@ -442,7 +442,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                         <Phone className="h-3 w-3"/>
                         <a href={`tel:${order.assignedAgent.phone}`} className="hover:underline">{order.assignedAgent.phone}</a>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500 hover:text-green-600 -ml-1" onClick={() => handleWhatsAppClick(order.assignedAgent?.phone)}>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-primary-foreground -ml-1" onClick={() => handleWhatsAppClick(order.assignedAgent?.phone)}>
                             <WhatsAppIcon className="h-4 w-4" />
                         </Button>
                     </div>

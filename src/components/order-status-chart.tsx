@@ -168,8 +168,8 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
             <div className="w-2 h-2 bg-amber-500 rounded-full mr-2"></div>
             Pending: {totalOrders.pending}
           </Badge>
-          <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+            <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
             Delivered: {totalOrders.delivered}
           </Badge>
           <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">

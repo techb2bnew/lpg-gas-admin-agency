@@ -44,7 +44,7 @@ interface EditProductDialogProps {
 
 const variantSchema = z.object({
   value: z.coerce.number().min(0, "Value must be a positive number."),
-  unit: z.enum(['Lbs', 'meter']),
+  unit: z.enum(['Lbs', 'meter','kg']),
   price: z.coerce.number().min(0, "Price must be positive."),
   stock: z.coerce.number().int().min(0, "Stock must be a whole number.").optional(),
 });
@@ -108,8 +108,13 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
             category: product.category || 'lpg',
             variants: variantsToShow.map(v => ({
                 ...v, 
-                value: parseFloat(v.label || '0'), 
-                unit: (v.label || '').endsWith('Lbs') ? 'Lbs' : 'meter',
+                value: parseFloat((v.label || '').replace(/[^\d.]/g, '')), 
+                unit: (() => {
+                  const label = (v.label || '').toLowerCase();
+                  if (label.endsWith('lbs')) return 'Lbs';
+                  if (label.endsWith('kg')) return 'kg';
+                  return 'meter';
+                })(),
                 stock: v.stock || 0
             })),
             lowStockThreshold: thresholdToShow,
@@ -207,7 +212,7 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
                                   <div key={field.id} className="flex items-start gap-2 p-3 border rounded-md relative">
                                        <div className={cn("grid grid-cols-1 sm:grid-cols-4 gap-2 flex-1", { "sm:grid-cols-3": isAdmin })}>
                                           <FormField control={form.control} name={`variants.${index}.value`} render={({ field }) => (<FormItem><FormLabel>Value</FormLabel><FormControl><Input type="number" placeholder="e.g. 14.2" {...field} disabled={!isAdmin} /></FormControl><FormMessage /></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isAdmin}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isAdmin}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="kg">kg</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
                                           <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Price ($)</FormLabel><FormControl><Input type="number" placeholder="1100" {...field} disabled={!isAdmin} /></FormControl><FormMessage /></FormItem>)} />
                                           {!isAdmin && (
                                             <FormField control={form.control} name={`variants.${index}.stock`} render={({ field }) => (<FormItem><FormLabel>Stock</FormLabel><FormControl><Input type="number" placeholder="150" {...field} /></FormControl><FormMessage /></FormItem>)} />
@@ -260,7 +265,7 @@ export function EditProductDialog({ item: product, isOpen, onOpenChange, onProdu
                                                       type="button" 
                                                       variant="destructive" 
                                                       size="icon" 
-                                                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                      className="absolute top-1 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                                       onClick={(e) => { e.stopPropagation(); removeImage(src, isNew);}}
                                                   >
                                                       <X className="h-4 w-4"/>

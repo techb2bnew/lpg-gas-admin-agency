@@ -88,7 +88,7 @@ export function UserDetailsDialog({ user, isOpen, onOpenChange }: UserDetailsDia
              <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <a href={`tel:${user.phone}`} className="text-sm hover:underline">{user.phone}</a>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600" onClick={handleWhatsAppClick}>
+                 <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-primary-foreground" onClick={handleWhatsAppClick}>
                    <WhatsAppIcon className="h-5 w-5" />
                 </Button>
             </div>

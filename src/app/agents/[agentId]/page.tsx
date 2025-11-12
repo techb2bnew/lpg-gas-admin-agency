@@ -166,7 +166,7 @@ const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 
 function OrderDetailsDialog({ order, children }: { order: any; children: React.ReactNode }) {
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'delivered': return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'delivered': return <CheckCircle className="h-4 w-4 text-primary" />;
       case 'assigned': return <Clock className="h-4 w-4 text-blue-500" />;
       case 'out_for_delivery': return <Truck className="h-4 w-4 text-orange-500" />;
       case 'cancelled': return <XCircle className="h-4 w-4 text-red-500" />;
@@ -176,7 +176,7 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
 
   const getPaymentStatusIcon = (received: boolean) => {
     return received ? 
-      <CheckCircle className="h-4 w-4 text-green-500" /> : 
+      <CheckCircle className="h-4 w-4 text-primary" /> : 
       <Clock className="h-4 w-4 text-orange-500" />;
   };
 
@@ -326,7 +326,7 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
                 </div>
                 {order.confirmedAt && (
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
                     <div>
                       <p className="font-medium">Order Confirmed</p>
                       <p className="text-sm text-muted-foreground">{new Date(order.confirmedAt).toLocaleString()}</p>
@@ -353,7 +353,7 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
                 )}
                 {order.deliveredAt && (
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
                     <div>
                       <p className="font-medium">Delivered</p>
                       <p className="text-sm text-muted-foreground">{new Date(order.deliveredAt).toLocaleString()}</p>
@@ -553,7 +553,7 @@ export default function AgentDetailsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
+              <CheckCircle className="h-5 w-5 text-primary" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Delivered</p>
                 <p className="text-2xl font-bold">{statistics.deliveredOrders}</p>
@@ -575,7 +575,7 @@ export default function AgentDetailsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center space-x-2">
-              <DollarSign className="h-5 w-5 text-green-500" />
+              <DollarSign className="h-5 w-5 text-primary" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Earnings</p>
                 <p className="text-2xl font-bold">${statistics.totalEarnings.toLocaleString()}</p>

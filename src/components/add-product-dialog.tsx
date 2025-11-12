@@ -40,8 +40,8 @@ interface AddProductDialogProps {
 
 const variantSchema = z.object({
   value: z.coerce.number().min(0.01, "Value is required and must be greater than 0."),
-  unit: z.enum(['Lbs', 'meter']),
-  price: z.coerce.number().min(0.01, "Base price is required and must be greater than 0."),
+  unit: z.enum(['Lbs', 'meter','kg']),
+  price: z.coerce.number().min(0.01, "Price is required and must be greater than 0."),
 });
 
 const productSchema = z.object({
@@ -172,7 +172,7 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} noValidate className="flex flex-col overflow-hidden">
               <ScrollArea className="flex-1 px-6">
-                  <div className="space-y-6 py-2">
+                  <div className="space-y-6 py-2 mx-2">
                      <FormField
                         control={form.control}
                         name="productName"
@@ -198,8 +198,8 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
                                   <div key={field.id} className="flex items-start gap-2 p-3 border rounded-md relative">
                                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                                           <FormField control={form.control} name={`variants.${index}.value`} render={({ field }) => (<FormItem><FormLabel>Value <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="e.g. 14.2" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
-                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Base Price ($) <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="1100" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.unit`} render={({ field }) => (<FormItem><FormLabel>Unit</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Lbs">Lbs</SelectItem><SelectItem value="kg">kg</SelectItem><SelectItem value="meter">meter</SelectItem></SelectContent></Select><FormMessage/></FormItem>)} />
+                                          <FormField control={form.control} name={`variants.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Price ($) <span className="text-red-500">*</span></FormLabel><FormControl><Input type="number" step="0.01" placeholder="1100" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                       </div>
                                       <Button type="button" variant="ghost" size="icon" className="shrink-0 mt-8 -mr-1" onClick={() => remove(index)} disabled={fields.length <= 1}><Trash2 className="h-4 w-4 text-destructive"/></Button>
                                   </div>
@@ -243,7 +243,7 @@ export function AddProductDialog({ isOpen, onOpenChange, onProductAdd }: AddProd
                                                   type="button" 
                                                   variant="destructive" 
                                                   size="icon" 
-                                                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                  className="absolute top-1 -right-2 h-6 w-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                                                   onClick={(e) => { e.stopPropagation(); removeImage(index);}}
                                               >
                                                   <X className="h-4 w-4"/>

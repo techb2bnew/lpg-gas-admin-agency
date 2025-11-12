@@ -220,7 +220,7 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
                         className="capitalize flex items-center gap-1"
                     >
                          <span className={cn("h-2 w-2 rounded-full", {
-                            'bg-green-400': profile.agencyStatus === 'active',
+                            'bg-primary': profile.agencyStatus === 'active',
                             'bg-red-400': profile.agencyStatus === 'inactive'
                         })} />
                         {profile.agencyStatus}

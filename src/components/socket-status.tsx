@@ -22,7 +22,7 @@ export const SocketStatus: React.FC<SocketStatusProps> = ({
   const { isListening } = useForceLogout();
 
   const statusText = isConnected ? 'Live' : 'Offline';
-  const statusColor = isConnected ? 'bg-green-500' : 'bg-red-500';
+  const statusColor = isConnected ? 'bg-primary' : 'bg-red-500';
   const badgeVariant = isConnected ? 'default' : 'destructive';
 
   if (variant === 'compact') {
