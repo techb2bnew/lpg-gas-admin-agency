@@ -135,8 +135,6 @@ export function AgentReportDialog({ agent, isOpen, onOpenChange }: AgentReportDi
                           <InfoItem icon={<Mail className="h-4 w-4"/>} label="Email" value={<a href={`mailto:${agent.email}`} className="hover:underline">{agent.email}</a>} />
                           <InfoItem icon={<Phone className="h-4 w-4"/>} label="Phone" value={<a href={`tel:${agent.phone}`} className="hover:underline">{agent.phone}</a>} />
                           <InfoItem icon={<Truck className="h-4 w-4"/>} label="Vehicle Number" value={agent.vehicleNumber} />
-                          <InfoItem icon={<User className="h-4 w-4"/>} label="PAN Card" value={agent.panCardNumber} />
-                          <InfoItem icon={<User className="h-4 w-4"/>} label="Aadhar Card" value={agent.aadharCardNumber} />
                           <InfoItem icon={<BadgeCheck className="h-4 w-4"/>} label="Driving License" value={agent.drivingLicence} />
                           <div className="sm:col-span-2">
                              <InfoItem icon={<Banknote className="h-4 w-4"/>} label="Bank Account" value={<div className="whitespace-pre-wrap">{agent.bankDetails}</div>} />

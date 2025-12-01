@@ -81,8 +81,6 @@ export interface Agent {
   email: string;
   phone: string;
   vehicleNumber: string;
-  panCardNumber: string;
-  aadharCardNumber: string;
   drivingLicence: string;
   bankDetails: string;
   status: 'online' | 'offline';

@@ -49,8 +49,6 @@ interface AgentDetailsResponse {
       email: string;
       phone: string;
       vehicleNumber: string;
-      panCardNumber: string;
-      aadharCardNumber: string;
       drivingLicence: string;
       bankDetails: string;
       status: string;
@@ -813,15 +811,7 @@ export default function AgentDetailsPage() {
                   <div className="flex items-center space-x-2">
                     <Truck className="h-4 w-4 text-muted-foreground" />
                     <span>Vehicle: {agent.vehicleNumber}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span>PAN: {agent.panCardNumber}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span>Aadhar: {agent.aadharCardNumber}</span>
-                  </div>
+                  </div>                
                   <div className="flex items-center space-x-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <span>License: {agent.drivingLicence}</span>

@@ -62,9 +62,9 @@ export function AssignAgentDialog({ order, isOpen, onOpenChange, onAgentAssigned
   // }, [isOpen, isConnected, toast]);
 
   if (!order) return null;
-  
-  const availableAgents = agents.filter(a => a.status.toLowerCase() === 'online');
-  
+
+  const availableAgents = agents;
+
   // Debug logging
   console.log('🔍 AssignAgentDialog - All agents:', agents);
   console.log('🔍 AssignAgentDialog - Available agents:', availableAgents);
