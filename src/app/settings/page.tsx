@@ -12,6 +12,7 @@ import { ProfileContext } from '@/context/profile-context';
 import { useContext } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield } from 'lucide-react';
+import BannerUpload from '@/components/BannerUpload.';
 
 export default function SettingsPage() {
   const { profile } = useContext(ProfileContext);
@@ -33,6 +34,7 @@ export default function SettingsPage() {
                   <>
                     <TaxManagement />
                     <PlatformChargeManagement />
+                    <BannerUpload />
                   </>
                 )}
                 {isAgencyOwner && (
