@@ -7,6 +7,7 @@ import { TaxManagement } from '@/components/tax-management';
 import { PlatformChargeManagement } from '@/components/platform-charge-management';
 import { CouponManagement } from '@/components/coupon-management';
 import { DeliveryChargeManagement } from '@/components/delivery-charge-management';
+// import { NotificationSettings } from '@/components/notification-settings';
 import { Toaster } from '@/components/ui/toaster';
 import { ProfileContext } from '@/context/profile-context';
 import { useContext } from 'react';
@@ -27,6 +28,9 @@ export default function SettingsPage() {
         <PageHeader title="Settings" />
         <div className="flex-1 overflow-auto py-6 pr-4 -mr-4">
           <div className="grid gap-6">
+            {/* Notification Settings - Available to all users */}
+            {/* <NotificationSettings /> */}
+            
             {hasSettingsAccess ? (
               <>
                 {isAdmin && (
@@ -46,7 +50,7 @@ export default function SettingsPage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  You don't have permission to access settings. Only administrators can manage tax and platform charges, and agency owners can manage coupons.
+                  You don't have permission to access other settings. Only administrators can manage tax and platform charges, and agency owners can manage coupons.
                 </AlertDescription>
               </Alert>
             )}
