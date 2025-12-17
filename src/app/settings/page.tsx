@@ -28,6 +28,7 @@ export default function SettingsPage() {
         <PageHeader title="Settings" />
         <div className="flex-1 overflow-auto py-6 pr-4 -mr-4">
           <div className="grid gap-6">
+           
             {hasSettingsAccess ? (
               <>
                 {isAdmin && (
@@ -48,7 +49,7 @@ export default function SettingsPage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  You don't have permission to access settings. Only administrators can manage tax and platform charges, and agency owners can manage coupons.
+                  You don't have permission to access other settings. Only administrators can manage tax and platform charges, and agency owners can manage coupons.
                 </AlertDescription>
               </Alert>
             )}

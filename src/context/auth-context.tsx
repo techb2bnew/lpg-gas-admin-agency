@@ -4,6 +4,7 @@
 import { createContext, useState, useEffect, ReactNode, useContext, useCallback } from 'react';
 import type { User } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { requestNotificationPermission } from '@/lib/firebase';
 
 interface LoginResult {
   success: boolean;
@@ -66,10 +67,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string): Promise<LoginResult> => {
     try {
+
+        const fcmToken = await requestNotificationPermission();
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, fcmToken: fcmToken, fcmDeviceType: 'web' }),
         });
         
         const result = await response.json();
