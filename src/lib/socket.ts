@@ -112,9 +112,6 @@ class SocketService {
         reconnectionAttempts: this.maxReconnectAttempts,
         reconnectionDelay: this.reconnectDelay,
         reconnectionDelayMax: 5000,
-        maxHttpBufferSize: 1e8,
-        pingTimeout: 30000,
-        pingInterval: 10000,
         upgrade: true,
         rememberUpgrade: true
       });
