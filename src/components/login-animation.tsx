@@ -2,7 +2,7 @@
 import Image from 'next/image';
 
 const CylinderIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <Image src="/leadIcon.png" alt="LEADWAY GAS" width={100} height={100} className="h-32 w-32 text-primary"/>
+    <Image src="/leadIcon.png" alt="LEADWAY GAS" width={1000} height={100} className="h-32 w-32 text-primary"/>
 );
 
 
