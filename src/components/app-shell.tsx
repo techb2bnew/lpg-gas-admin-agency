@@ -144,9 +144,9 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
     switch (profile.role) {
       case 'super_admin':
       case 'admin':
-        return 'LEADWAY GAS ADMIN';
+        return 'ADMIN';
       case 'agency_owner':
-        return 'LEADWAY GAS AGENCY';
+        return 'AGENCY';
       default:
         return 'LEADWAY GAS';
     }
@@ -184,7 +184,7 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Image src="/leadIcon.png" alt="LEADWAY GAS" width={100} height={100} className="h-6 w-6"/>
+              <Image src="/mainIcon.png" alt="LEADWAY GAS" width={1000} height={500} className='w-[130px]'/>
               <span className="text-[#035db7]">{appNameToDisplay()}</span>
             </Link>
           </div>
@@ -205,7 +205,7 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
             <SheetContent side="left" className="flex flex-col">
               <div className="flex h-14 items-center border-b mb-4">
                   <Link href="/" className="flex items-center gap-2 font-semibold">
-                  <Image src="/leadIcon.png" alt="LEADWAY GAS" width={100} height={100} className="h-6 w-6"/>
+                  <Image src="/mainIcon.png" alt="LEADWAY GAS" width={1000} height={500} className='w-[130px]'/>
                     <span className="">{appNameToDisplay()}</span>
                   </Link>
               </div>
