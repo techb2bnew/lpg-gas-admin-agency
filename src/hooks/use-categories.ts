@@ -9,7 +9,6 @@ export function useCategories() {
 
   const fetchCategories = useCallback(async () => {
     if (!token) return;
-    
     setLoading(true);
     try {
       const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001'}/api/categories`);
