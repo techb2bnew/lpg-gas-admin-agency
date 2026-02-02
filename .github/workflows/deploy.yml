@@ -1,0 +1,42 @@
+name: Auto Deploy Frontend (Admin Agency)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Frontend to AWS EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            set -e
+
+            echo "🔧 Git config"
+            git config --global pull.rebase true
+            git config --global --add safe.directory ~/leadway_gas/lpg-gas-admin-agency
+
+            echo "⬇️ Pull latest frontend code"
+            cd ~/leadway_gas/lpg-gas-admin-agency
+            git pull origin main
+
+            echo "📦 Install dependencies"
+            npm install
+
+            echo "🏗️ Build frontend"
+            npm run build
+
+            echo "♻️ Reload frontend"
+            pm2 reload lpg-gas-admin
+
+            pm2 save
