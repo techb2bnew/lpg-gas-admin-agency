@@ -110,7 +110,7 @@ export function ProductDetailsDialog({ item: product, isOpen, onOpenChange, isAd
                             {!isAdmin && variant.stock !== undefined && (
                               <span className="text-xs text-muted-foreground">Stock: {variant.stock}</span>
                             )}
-                            <span className="font-medium">${variant.price?.toLocaleString()}</span>
+                            <span className="font-medium">KSH{variant.price?.toLocaleString()}</span>
                           </div>
                         </div>
                       ))}

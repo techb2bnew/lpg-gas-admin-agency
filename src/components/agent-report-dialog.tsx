@@ -87,7 +87,7 @@ export function AgentReportDialog({ agent, isOpen, onOpenChange }: AgentReportDi
                                 <p className="text-xs text-muted-foreground">Total Deliveries</p>
                             </div>
                              <div>
-                                <p className="text-2xl font-bold">${reportData.totalEarnings.toLocaleString()}</p>
+                                <p className="text-2xl font-bold">KSH{reportData.totalEarnings.toLocaleString()}</p>
                                 <p className="text-xs text-muted-foreground">Total Earnings</p>
                             </div>
                              <div>

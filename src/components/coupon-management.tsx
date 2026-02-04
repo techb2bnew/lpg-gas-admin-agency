@@ -451,7 +451,7 @@ export function CouponManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="discountValue">
-                      Discount Value {formData.discountType === 'percentage' ? '(%)' : '($)'}
+                      Discount Value {formData.discountType === 'percentage' ? '(%)' : '(KSH)'}
                     </Label>
                     <Input
                       id="discountValue"
@@ -462,7 +462,7 @@ export function CouponManagement() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="minAmount">Minimum Amount ($)</Label>
+                    <Label htmlFor="minAmount">Minimum Amount (KSH)</Label>
                     <Input
                       id="minAmount"
                       type="number"
@@ -474,7 +474,7 @@ export function CouponManagement() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="maxAmount">Maximum Amount ($) - Optional</Label>
+                    <Label htmlFor="maxAmount">Maximum Amount (KSH) - Optional</Label>
                     <Input
                       id="maxAmount"
                       type="number"
@@ -558,7 +558,7 @@ export function CouponManagement() {
                           <span>{parseFloat(coupon.discountValue.toString())}%</span>
                         ) : (
                           <>
-                            <IndianRupee className="h-3 w-3" />
+                            KSH
                             <span>{parseFloat(coupon.discountValue.toString()).toLocaleString()}</span>
                           </>
                         )}
@@ -566,14 +566,14 @@ export function CouponManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <IndianRupee className="h-3 w-3" />
+                        KSH
                         <span>{parseFloat(coupon.minAmount.toString()).toLocaleString()}</span>
                       </div>
                     </TableCell>
                     <TableCell>
                       {coupon.maxAmount ? (
                         <div className="flex items-center gap-1">
-                          <IndianRupee className="h-3 w-3" />
+                          KSH
                           <span>{parseFloat(coupon.maxAmount.toString()).toLocaleString()}</span>
                         </div>
                       ) : (

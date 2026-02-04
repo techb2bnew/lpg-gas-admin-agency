@@ -28,14 +28,14 @@ export function SalesChart({ salesByDay }: SalesChartProps) {
           tickFormatter={(value) => value.slice(0, 3)}
         />
         <YAxis 
-          tickFormatter={(value) => `$${value / 1000}k`}
+          tickFormatter={(value) => `KSH${value / 1000}k`}
         />
         <ChartTooltip 
             cursor={false}
             content={
                 <ChartTooltipContent 
                     indicator='line'
-                    formatter={(value) => `$${value.toLocaleString()}`}
+                    formatter={(value) => `KSH${value.toLocaleString()}`}
                 />
             } 
         />

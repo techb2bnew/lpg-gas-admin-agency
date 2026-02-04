@@ -343,12 +343,12 @@ export function DeliveryChargeManagement() {
                       <strong>Current Delivery Charge:</strong>
                       {deliveryCharge.chargeType === 'per_km' ? (
                         <span className="flex items-center ml-2">
-                          <IndianRupee className="h-4 w-4" />
+                          KSH
                           {parseFloat(deliveryCharge.ratePerKm?.toString() || '0')} per km
                         </span>
                       ) : (
                         <span className="flex items-center ml-2">
-                          <IndianRupee className="h-4 w-4" />
+                          KSH
                           {parseFloat(deliveryCharge.fixedAmount?.toString() || '0')} fixed charge
                         </span>
                       )}
@@ -404,10 +404,10 @@ export function DeliveryChargeManagement() {
             <div className="space-y-4">
               {chargeType === 'per_km' ? (
                 <div className="space-y-2">
-                  <Label htmlFor="rate-per-km">Rate per Kilometer ($)</Label>
+                  <Label htmlFor="rate-per-km">Rate per Kilometer (KSH)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      $
+                      KSH
                     </span>
                     <Input
                       id="rate-per-km"
@@ -421,15 +421,15 @@ export function DeliveryChargeManagement() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: $5 per km means $50 charge for 10 km delivery
+                    Example: KSH 5 per km means KSH 50 charge for 10 km delivery
                   </p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="fixed-amount">Fixed Delivery Charge ($)</Label>
+                  <Label htmlFor="fixed-amount">Fixed Delivery Charge (KSH)</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      $
+                      KSH
                     </span>
                     <Input
                       id="fixed-amount"
@@ -443,7 +443,7 @@ export function DeliveryChargeManagement() {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Example: $50 means $50 delivery charge for all orders
+                    Example: KSH 50 means KSH 50 delivery charge for all orders
                   </p>
                 </div>
               )}

@@ -176,7 +176,7 @@ function OrdersTable({
                       )}
                     </TableCell>
                   )}
-                  <TableCell className="hidden md:table-cell">${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                  <TableCell className="hidden md:table-cell">KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                   <TableCell className="hidden lg:table-cell">
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>

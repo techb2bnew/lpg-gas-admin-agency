@@ -368,7 +368,7 @@ export default function DashboardPage() {
                         <TableCell className="hidden sm:table-cell py-2">
                           {formatDate(order.createdAt)}
                         </TableCell>
-                        <TableCell className="text-right py-2">${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                        <TableCell className="text-right py-2">KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
