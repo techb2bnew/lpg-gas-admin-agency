@@ -100,7 +100,7 @@ export default function PaymentsPage() {
                     <TableRow key={order.id}>
                       <TableCell className="font-medium text-primary hover:underline cursor-pointer">#{order.orderNumber.slice(-8)}</TableCell>
                       <TableCell>{order.customerName}</TableCell>
-                      <TableCell>${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                      <TableCell>KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                       <TableCell>
                         <Badge variant={paymentStatusVariant[order.paymentStatus.toLowerCase()] || 'secondary'} className="capitalize">{order.paymentStatus}</Badge>
                       </TableCell>

@@ -287,9 +287,9 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                            <p className="text-xs text-muted-foreground">quantity</p>
                         </div>
                         <div className="text-right">
-                           <p className="font-medium">${item.total.toLocaleString()}</p>
+                           <p className="font-medium">KSH{item.total.toLocaleString()}</p>
                            <p className="text-xs text-muted-foreground">
-                                @ ${item.variantPrice.toLocaleString()}
+                                @ KSH{item.variantPrice.toLocaleString()}
                            </p>
                         </div>
                     </div>
@@ -303,20 +303,20 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
             <div className="space-y-2 mb-4">
                 <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="flex items-center"><IndianRupee className="h-4 w-4" />{parseFloat(order.subtotal || '0').toLocaleString()}</span>
+                    <span className="flex items-center">KSH{parseFloat(order.subtotal || '0').toLocaleString()}</span>
                 </div>
                 {order.taxAmount && parseFloat(order.taxAmount) > 0 && (
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">
-                            Tax ({order.taxType === 'percentage' ? `${order.taxValue}%` : `$${order.taxValue}`})
+                            Tax ({order.taxType === 'percentage' ? `${order.taxValue}%` : `KSH${order.taxValue}`})
                         </span>
-                        <span className="flex items-center"><IndianRupee className="h-4 w-4" />{parseFloat(order.taxAmount).toLocaleString()}</span>
+                        <span className="flex items-center">KSH{parseFloat(order.taxAmount).toLocaleString()}</span>
                     </div>
                 )}
                 {order.platformCharge && parseFloat(order.platformCharge) > 0 && (
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Platform Charge</span>
-                        <span className="flex items-center"><IndianRupee className="h-4 w-4" />{parseFloat(order.platformCharge).toLocaleString()}</span>
+                        <span className="flex items-center">KSH{parseFloat(order.platformCharge).toLocaleString()}</span>
                     </div>
                 )}
                 {order.deliveryCharge && parseFloat(order.deliveryCharge) > 0 && (
@@ -324,13 +324,13 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                         <span className="text-muted-foreground">
                             Delivery Charge {order.deliveryDistance && `(${parseFloat(order.deliveryDistance).toFixed(2)} km)`}
                         </span>
-                        <span className="flex items-center"><IndianRupee className="h-4 w-4" />{parseFloat(order.deliveryCharge).toLocaleString()}</span>
+                        <span className="flex items-center">KSH{parseFloat(order.deliveryCharge).toLocaleString()}</span>
                     </div>
                 )}
                 {order.couponCode && order.couponDiscount && parseFloat(order.couponDiscount) > 0 && (
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-muted-foreground">Coupon Discount ({order.couponCode})</span>
-                        <span className="flex items-center text-primary"><IndianRupee className="h-4 w-4" />-{parseFloat(order.couponDiscount).toLocaleString()}</span>
+                        <span className="flex items-center text-primary">KSH-{parseFloat(order.couponDiscount).toLocaleString()}</span>
                     </div>
                 )}
             </div>
@@ -339,7 +339,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
 
             <div className="flex justify-between items-center font-bold text-lg p-3 bg-primary/10 rounded-lg">
                 <span className="text-primary">Total Amount</span>
-                <span className="flex items-center text-primary"><IndianRupee className="h-5 w-5" />{parseFloat(order.totalAmount).toLocaleString()}</span>
+                <span className="flex items-center text-primary">KSH{parseFloat(order.totalAmount).toLocaleString()}</span>
             </div>
         </div>
          {order.status === 'delivered' && (

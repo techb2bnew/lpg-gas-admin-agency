@@ -512,7 +512,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   return (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{variant.label}</TableCell>
-                      <TableCell>${variant.price}</TableCell>
+                      <TableCell>KSH{variant.price}</TableCell>
                       <TableCell>{variant.unit}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -662,7 +662,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`variant-${index}-price`}>Price ($)</Label>
+                    <Label htmlFor={`variant-${index}-price`}>Price (KSH)</Label>
                     <Input
                       id={`variant-${index}-price`}
                       type="number"

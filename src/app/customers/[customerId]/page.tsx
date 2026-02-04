@@ -193,7 +193,7 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Total Amount</p>
-                  <p className="font-bold text-lg">${parseFloat(order.totalAmount).toLocaleString()}</p>
+                  <p className="font-bold text-lg">KSH{parseFloat(order.totalAmount).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="font-medium text-muted-foreground">Payment Method</p>
@@ -316,9 +316,9 @@ function OrderDetailsDialog({ order, children }: { order: Order; children: React
                       <p className="text-sm text-muted-foreground">Variant: {item.variantLabel}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${item.variantPrice.toLocaleString()}</p>
+                      <p className="font-semibold">KSH{item.variantPrice.toLocaleString()}</p>
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                      <p className="text-sm font-medium">Total: ${item.total.toLocaleString()}</p>
+                      <p className="text-sm font-medium">Total: KSH{item.total.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
@@ -682,7 +682,7 @@ export default function CustomerDetailsPage() {
                             {order.status.replace('_', ' ')}
                           </Badge>
                         </TableCell>
-                        <TableCell>${parseFloat(order.totalAmount).toLocaleString()}</TableCell>
+                        <TableCell>KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                         <TableCell className="capitalize">
                           {order.paymentMethod ? order.paymentMethod.replace('_', ' ') : 'Not specified'}
                         </TableCell>
