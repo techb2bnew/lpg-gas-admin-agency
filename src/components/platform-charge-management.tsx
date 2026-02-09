@@ -289,8 +289,8 @@ export function PlatformChargeManagement() {
             <div className="space-y-2">
               <Label htmlFor="platform-charge-input">Platform Charge Amount (KSH)</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                  KSH
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none z-10">
+                  KSH&nbsp;
                 </span>
                 <Input
                   id="platform-charge-input"
@@ -300,7 +300,7 @@ export function PlatformChargeManagement() {
                   placeholder="Enter platform charge amount"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="pl-8"
+                  className="pl-14"
                 />
               </div>
               <p className="text-sm text-muted-foreground">

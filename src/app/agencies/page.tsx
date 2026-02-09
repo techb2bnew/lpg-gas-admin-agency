@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Trash2, Loader2, ChevronDown, Filter, Eye, Pencil } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Loader2, ChevronDown, Filter, Eye, Pencil, Building2 } from 'lucide-react';
 import type { Agency } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -386,7 +386,18 @@ export default function AgenciesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedAgencies.map((agency: Agency) => (
+                {paginatedAgencies.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Building2 className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-sm font-medium text-muted-foreground">No agencies found</p>
+                        <p className="text-xs text-muted-foreground">There are no agencies to display at this time.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedAgencies.map((agency: Agency) => (
                   <TableRow key={agency.id} onClick={() => handleDetailsClick(agency)} className="cursor-pointer">
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
@@ -465,7 +476,7 @@ export default function AgenciesPage() {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           )}

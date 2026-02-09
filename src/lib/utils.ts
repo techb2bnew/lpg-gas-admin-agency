@@ -75,3 +75,21 @@ export function validateEmail(email: string): boolean {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 }
+
+/**
+ * Format status string to camel case with underscores preserved
+ * Examples: "returned" -> "Returned", "out_for_delivery" -> "Out_For_Delivery"
+ */
+export function formatStatus(status: string): string {
+  if (!status) return '';
+  
+  // Special case: Convert "confirmed" to "Click and Collect"
+  if (status.toLowerCase() === 'confirmed') {
+    return 'Click and Collect';
+  }
+  
+  return status
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('_');
+}

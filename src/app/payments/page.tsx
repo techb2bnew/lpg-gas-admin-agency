@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Order } from '@/lib/types';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CreditCard } from 'lucide-react';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { AuthContext, useAuth } from '@/context/auth-context';
@@ -96,7 +96,18 @@ export default function PaymentsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.map((order: Order) => (
+                  {orders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <CreditCard className="h-8 w-8 text-muted-foreground" />
+                          <p className="text-sm font-medium text-muted-foreground">No payments found</p>
+                          <p className="text-xs text-muted-foreground">There are no payments to display at this time.</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    orders.map((order: Order) => (
                     <TableRow key={order.id}>
                       <TableCell className="font-medium text-primary hover:underline cursor-pointer">#{order.orderNumber.slice(-8)}</TableCell>
                       <TableCell>{order.customerName}</TableCell>
@@ -108,7 +119,7 @@ export default function PaymentsPage() {
                        <TableCell>{order.assignedAgent?.name || 'N/A'}</TableCell>
                       <TableCell>{order.deliveredAt ? new Date(order.deliveredAt).toLocaleString() : 'In Transit'}</TableCell>
                     </TableRow>
-                  ))}
+                  )))}
                 </TableBody>
               </Table>
             )}

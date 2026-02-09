@@ -12,7 +12,7 @@ import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { AssignAgentDialog } from './assign-agent-dialog';
 import { CancelOrderDialog } from './cancel-order-dialog';
-import { cn } from '@/lib/utils';
+import { cn, formatStatus } from '@/lib/utils';
 import Image from 'next/image';
 import { ImageViewerDialog } from './image-viewer-dialog';
 
@@ -239,7 +239,7 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                 </div>
                  <div className="flex justify-between items-center">
                     <span className="text-muted-foreground flex items-center gap-2">Status</span>
-                    <Badge variant={statusVariant[order.status]} className="text-xs capitalize">{order.status.replace('_', ' ')}</Badge>
+                    <Badge variant={statusVariant[order.status]} className="text-xs">{formatStatus(order.status)}</Badge>
                 </div>
                 {(order.status === 'cancelled' || order.status === 'returned') && order.adminNotes && (
                    <div className="flex justify-between items-start pt-2">

@@ -12,10 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, ArrowLeft, Phone, Mail, MapPin, Calendar, Package, Truck, DollarSign, AlertCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, ArrowLeft, Phone, Mail, MapPin, Calendar, Package, Truck, DollarSign, AlertCircle, Clock, CheckCircle, XCircle, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, formatStatus } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -672,14 +672,25 @@ export default function CustomerDetailsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {paginatedOrders.map((order) => (
+                      {paginatedOrders.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={9} className="h-24 text-center">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                              <p className="text-sm font-medium text-muted-foreground">No orders found</p>
+                              <p className="text-xs text-muted-foreground">This customer has no orders yet.</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedOrders.map((order) => (
                       <TableRow key={order.id}>
                         <TableCell className="font-medium">
                           #{order.orderNumber.slice(-8)}
                         </TableCell>
                         <TableCell>
                           <Badge variant={statusVariant[order.status] || 'secondary'}>
-                            {order.status.replace('_', ' ')}
+                            {formatStatus(order.status)}
                           </Badge>
                         </TableCell>
                         <TableCell>KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
@@ -718,7 +729,7 @@ export default function CustomerDetailsPage() {
                           )}
                         </TableCell>
                       </TableRow>
-                      ))}
+                      )))}
                     </TableBody>
                   </Table>
                 </div>

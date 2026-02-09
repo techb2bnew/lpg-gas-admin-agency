@@ -9,13 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MoreHorizontal, FileDown, ChevronDown, Search, Loader2, Calendar as CalendarIcon, X, Eye, UserPlus, RotateCcw, XCircle } from 'lucide-react';
+import { MoreHorizontal, FileDown, ChevronDown, Search, Loader2, Calendar as CalendarIcon, X, Eye, UserPlus, RotateCcw, XCircle, ShoppingCart } from 'lucide-react';
 import type { Order, Agent } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { AssignAgentDialog } from '@/components/assign-agent-dialog';
 import { CancelOrderDialog } from '@/components/cancel-order-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, formatStatus } from '@/lib/utils';
 import { ReturnOrderDialog } from '@/components/return-order-dialog';
 import { Input } from '@/components/ui/input';
 import { AuthContext, useAuth } from '@/context/auth-context';
@@ -113,7 +113,18 @@ function OrdersTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order: Order) => (
+              {orders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={10} className="h-24 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">No orders found</p>
+                      <p className="text-xs text-muted-foreground">There are no orders to display at this time.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orders.map((order: Order) => (
                 <TableRow
                   key={order.id}
                   onClick={() => onShowDetails(order)}
@@ -181,7 +192,7 @@ function OrdersTable({
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="w-40 justify-between capitalize" onClick={(e) => e.stopPropagation()}>
-                                <Badge variant={statusVariant[order.status]} className="pointer-events-none">{order.status.replace('_', ' ')}</Badge>
+                                <Badge variant={statusVariant[order.status]} className="pointer-events-none">{formatStatus(order.status)}</Badge>
                                 <ChevronDown className="h-4 w-4 text-muted-foreground"/>
                             </Button>
                         </DropdownMenuTrigger>
@@ -198,9 +209,8 @@ function OrdersTable({
                                     (status === 'in-progress' && !order.assignedAgent) || 
                                     isActionDisabled(order.status)
                                 }
-                                className="capitalize"
                                 >
-                                {status.replace('_', ' ')}
+                                {formatStatus(status)}
                                 {status === 'in-progress' && !order.assignedAgent && " (Assign agent first)"}
                                 </DropdownMenuRadioItem>
                             ))}
@@ -273,7 +283,7 @@ function OrdersTable({
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </div>
@@ -342,6 +352,10 @@ function OrdersPageContent() {
   const [isPickupConfirmModalOpen, setIsPickupConfirmModalOpen] = useState(false);
   const [isProcessingPickupDelivery, setIsProcessingPickupDelivery] = useState(false);
 
+  // Calculate total orders across all statuses
+  const totalOrdersCount = useMemo(() => {
+    return Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+  }, [statusCounts]);
 
   const fetchOrders = useCallback(async (page = 1, status = activeTab, search = searchTerm, start?: Date, end?: Date) => {
       if (!token) return;
@@ -372,6 +386,11 @@ function OrdersPageContent() {
           if (result.success) {
               setOrders(result.data.orders);
               setPagination(result.data.pagination);
+              // Update the count for the current status based on filtered data length
+              setStatusCounts(prev => ({
+                ...prev,
+                [status]: result.data.pagination.totalItems
+              }));
           } else {
               toast({ variant: 'destructive', title: 'Error', description: 'Failed to fetch orders.' });
           }
@@ -382,70 +401,62 @@ function OrdersPageContent() {
       }
   }, [token, toast, handleApiError, activeTab, searchTerm]);
 
-  const fetchStatusCounts = useCallback(async (start?: Date, end?: Date) => {
+  const fetchStatusCounts = useCallback(async (search = searchTerm, start?: Date, end?: Date) => {
     if (!token) return;
     
     try {
-      const params = new URLSearchParams();
-      if (start) {
-        params.append('startDate', format(start, 'yyyy-MM-dd'));
-      }
-      if (end) {
-        params.append('endDate', format(end, 'yyyy-MM-dd'));
-      }
+      // Fetch counts for each status with the same filters (search, dates)
+      const counts: Record<string, number> = {};
       
-      // Single API call to get all orders without status filter
-      const url = new URL(`${API_BASE_URL}/api/orders`);
-      url.searchParams.append('limit', '1000'); // Get more orders to count all statuses
-      
-      // Add date parameters if provided
-      if (start) {
-        url.searchParams.append('startDate', format(start, 'yyyy-MM-dd'));
-      }
-      if (end) {
-        url.searchParams.append('endDate', format(end, 'yyyy-MM-dd'));
-      }
-      
-      const response = await fetch(url.toString(), {
-        headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
+      // Initialize all status counts to 0
+      orderStatusesForTabs.forEach(status => {
+        counts[status] = 0;
       });
       
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          const counts: Record<string, number> = {};
-          
-          // Initialize all status counts to 0
-          orderStatusesForTabs.forEach(status => {
-            counts[status] = 0;
-          });
-          
-          // Count orders by status
-          result.data.orders.forEach((order: Order) => {
-            let statusKey = order.status as string;
-            // Map API status to frontend status
-            if (order.status === 'assigned') {
-              statusKey = 'in-progress';
-            } else if ((order.status as string) === 'out_for_delivery') {
-              statusKey = 'out-for-delivery';
-            }
-            
-            if (counts.hasOwnProperty(statusKey)) {
-              counts[statusKey]++;
-            }
-          });
-          
-          setStatusCounts(counts);
+      // Fetch counts for each status individually with filters
+      const countPromises = orderStatusesForTabs.map(async (status) => {
+        const url = new URL(`${API_BASE_URL}/api/orders`);
+        url.searchParams.append('page', '1');
+        url.searchParams.append('limit', '1'); // We only need the totalItems count
+        const statusParam = status === 'in-progress' ? 'assigned' : status === 'out-for-delivery' ? 'out_for_delivery' : status;
+        url.searchParams.append('status', statusParam);
+        
+        if (search) {
+          url.searchParams.append('search', search);
         }
-      }
+        if (start) {
+          url.searchParams.append('startDate', format(start, 'yyyy-MM-dd'));
+        }
+        if (end) {
+          url.searchParams.append('endDate', format(end, 'yyyy-MM-dd'));
+        }
+        
+        try {
+          const response = await fetch(url.toString(), {
+            headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+              counts[status] = result.data.pagination.totalItems;
+            }
+          }
+        } catch (error) {
+          console.error(`Failed to fetch count for ${status}`, error);
+        }
+      });
+      
+      await Promise.all(countPromises);
+      setStatusCounts(counts);
     } catch (error) {
       console.error('Failed to fetch status counts', error);
     }
-  }, [token]);
+  }, [token, searchTerm]);
 
   useEffect(() => {
     fetchOrders(1, activeTab, searchTerm, startDate, endDate);
-    fetchStatusCounts(startDate, endDate);
+    fetchStatusCounts(searchTerm, startDate, endDate);
   }, [activeTab, searchTerm, startDate, endDate, fetchOrders, fetchStatusCounts]);
 
   const handlePageChange = (newPage: number) => {
@@ -470,13 +481,13 @@ function OrdersPageContent() {
     const handleOrderCreated = () => {
       console.log('🔄 Order created event received, refreshing...');
       fetchOrders(pagination.currentPage, activeTab, searchTerm, startDate, endDate); 
-      fetchStatusCounts(startDate, endDate);
+      fetchStatusCounts(searchTerm, startDate, endDate);
     };
 
     const handleOrderUpdate = () => {
       console.log('🔄 Order update event received, refreshing...');
       fetchOrders(pagination.currentPage, activeTab, searchTerm, startDate, endDate); 
-      fetchStatusCounts(startDate, endDate);
+      fetchStatusCounts(searchTerm, startDate, endDate);
     };
 
     // Listen to socket events
@@ -499,7 +510,7 @@ function OrdersPageContent() {
       const handleDataUpdate = () => {
         toast({ title: 'Live Update', description: 'Order data has been updated.'});
         fetchOrders(pagination.currentPage, activeTab, searchTerm, startDate, endDate); 
-        fetchStatusCounts(startDate, endDate);
+        fetchStatusCounts(searchTerm, startDate, endDate);
       };
 
       socket.on('order_updated', handleDataUpdate);
@@ -604,7 +615,7 @@ function OrdersPageContent() {
 
   const onUpdate = () => {
     fetchOrders(pagination.currentPage, activeTab, searchTerm, startDate, endDate);
-    fetchStatusCounts(startDate, endDate);
+    fetchStatusCounts(searchTerm, startDate, endDate);
   }
 
   const updateOrderStatus = async (order: Order, newStatus: Order['status'], notes?: string): Promise<boolean> => {
@@ -765,26 +776,119 @@ function OrdersPageContent() {
   };
   
   const handleExport = async () => {
-    if (!token) return;
+    if (!token) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Authentication required.' });
+      return;
+    }
+    
     try {
-      const response = await fetch(`${API_BASE_URL}/api/orders/export`, {
+      setIsLoading(true);
+      // Use query parameter instead of path parameter to avoid UUID parsing issue
+      const url = new URL(`${API_BASE_URL}/api/orders`);
+      url.searchParams.append('export', 'true');
+      url.searchParams.append('limit', '10000'); // Get all filtered orders
+      
+      // Add current filters to export based on active tab
+      if (activeTab && activeTab !== 'all') {
+        const statusParam = activeTab === 'in-progress' ? 'assigned' : activeTab === 'out-for-delivery' ? 'out_for_delivery' : activeTab;
+        url.searchParams.append('status', statusParam);
+      }
+      if (searchTerm) {
+        url.searchParams.append('search', searchTerm);
+      }
+      if (startDate) {
+        url.searchParams.append('startDate', format(startDate, 'yyyy-MM-dd'));
+      }
+      if (endDate) {
+        url.searchParams.append('endDate', format(endDate, 'yyyy-MM-dd'));
+      }
+      
+      const response = await fetch(url.toString(), {
         headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
       });
+      
       if (!response.ok) {
-        handleApiError(response);
+        const errorData = await response.json().catch(() => ({}));
+        toast({ 
+          variant: 'destructive', 
+          title: 'Export Failed', 
+          description: errorData.error || errorData.message || 'Failed to export orders. Please try again.' 
+        });
+        setIsLoading(false);
         return;
       }
-      const blob = await response.blob();
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.href = url;
-      link.setAttribute('download', 'orders_export.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      
+      // Check if response is CSV or JSON
+      const contentType = response.headers.get('content-type') || '';
+      
+      if (contentType.includes('application/json')) {
+        // If API returns JSON, convert to Excel/CSV
+        const data = await response.json();
+        if (data.success && data.data && data.data.orders) {
+          const orders = data.data.orders;
+          
+          // Convert to CSV format
+          const csvHeader = 'Order ID,Customer,Items,Agency,Delivery Mode,Payment Method,Agent,Amount,Status,Date\n';
+          const csvRows = orders.map((order: Order) => {
+            const items = order.items.map(item => `${item.productName} (${item.quantity}x)`).join('; ');
+            const agent = order.assignedAgent ? order.assignedAgent.name : 'Unassigned';
+            const agency = order.agency ? order.agency.name : 'N/A';
+            
+            return [
+              `#${order.orderNumber.slice(-8)}`,
+              `"${order.customerName}"`,
+              `"${items}"`,
+              `"${agency}"`,
+              order.deliveryMode?.replace('_', ' ') || 'N/A',
+              order.paymentMethod?.replace('_', ' ') || 'N/A',
+              `"${agent}"`,
+              `KSH${parseFloat(order.totalAmount).toLocaleString()}`,
+              formatStatus(order.status),
+              formatDate(order.createdAt)
+            ].join(',');
+          }).join('\n');
+          
+          const csvContent = csvHeader + csvRows;
+          const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel
+          const link = document.createElement('a');
+          const urlObj = URL.createObjectURL(blob);
+          link.href = urlObj;
+          const statusName = activeTab === 'in-progress' ? 'In-Progress' : formatStatus(activeTab);
+          const fileName = `orders_${statusName}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(urlObj);
+        }
+      } else {
+        // If API returns CSV/blob directly
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        const urlObj = URL.createObjectURL(blob);
+        link.href = urlObj;
+        const statusName = activeTab === 'in-progress' ? 'In-Progress' : formatStatus(activeTab);
+        const fileName = `orders_${statusName}_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(urlObj);
+      }
+      
+      toast({ 
+        title: 'Export Successful', 
+        description: `${formatStatus(activeTab)} orders have been exported successfully.` 
+      });
     } catch (error) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Failed to export orders.' });
+      console.error('Export error:', error);
+      toast({ 
+        variant: 'destructive', 
+        title: 'Export Error', 
+        description: 'An error occurred while exporting orders. Please try again.' 
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -831,9 +935,19 @@ function OrdersPageContent() {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
+                    key={`start-date-${startDate?.getTime() || 'none'}`}
                     mode="single"
-                    selected={startDate}
-                    onSelect={setStartDate}
+                    selected={startDate || undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        setStartDate(date);
+                      } else {
+                        setStartDate(undefined);
+                      }
+                    }}
+                    modifiersClassNames={{
+                      selected: "bg-primary text-primary-foreground"
+                    }}
                     initialFocus
                     />
                 </PopoverContent>
@@ -853,9 +967,19 @@ function OrdersPageContent() {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
+                    key={`end-date-${endDate?.getTime() || 'none'}`}
                     mode="single"
-                    selected={endDate}
-                    onSelect={setEndDate}
+                    selected={endDate || undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        setEndDate(date);
+                      } else {
+                        setEndDate(undefined);
+                      }
+                    }}
+                    modifiersClassNames={{
+                      selected: "bg-primary text-primary-foreground"
+                    }}
                     initialFocus
                     />
                 </PopoverContent>
@@ -880,15 +1004,20 @@ function OrdersPageContent() {
         </div>
       ) : (
       <Tabs defaultValue="pending" onValueChange={setActiveTab}>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground">Total Orders:</span> {totalOrdersCount}
+          </div>
+        </div>
         <div className="overflow-x-auto">
           <TabsList className="bg-muted p-1 rounded-lg">
             {orderStatusesForTabs.map(status => (
               <TabsTrigger 
                 key={status} 
                 value={status}
-                className="capitalize px-4 py-1.5 text-sm font-medium rounded-md"
+                className="px-4 py-1.5 text-sm font-medium rounded-md"
               >
-                <span className="mr-2">{status.replace('_', '-')}</span>
+                <span className="mr-2">{formatStatus(status)}</span>
                  <Badge variant={status === activeTab ? 'default' : 'secondary'}>
                     {statusCounts[status] ?? 0}
                 </Badge>

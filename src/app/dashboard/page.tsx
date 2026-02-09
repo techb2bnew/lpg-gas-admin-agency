@@ -21,7 +21,7 @@ import { OrderStatusChart } from '@/components/order-status-chart';
 import { ProfileContext } from '@/context/profile-context';
 import { useNotifications } from '@/context/notification-context';
 import { useSocket } from '@/context/socket-context';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatStatus } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const RECENT_ORDERS_PER_PAGE = 5;
@@ -356,21 +356,32 @@ export default function DashboardPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedRecentOrders.map((order: Order) => (
+                    {paginatedRecentOrders.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center">
+                          <div className="flex flex-col items-center justify-center gap-2">
+                            <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                            <p className="text-sm font-medium text-muted-foreground">No recent orders</p>
+                            <p className="text-xs text-muted-foreground">There are no recent orders to display.</p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      paginatedRecentOrders.map((order: Order) => (
                       <TableRow key={order.id} onClick={() => handleShowDetails(order)} className="cursor-pointer">
                         <TableCell className="py-2">
                           <div className="font-medium">{order.customerName}</div>
                           <div className="text-sm text-muted-foreground">#{order.orderNumber.slice(-8)}</div>
                         </TableCell>
                         <TableCell className="py-2">
-                           <Badge variant={statusVariant[order.status.replace('_', '-')] || 'secondary'} className="capitalize">{order.status.replace('_', ' ')}</Badge>
+                           <Badge variant={statusVariant[order.status.replace('_', '-')] || 'secondary'}>{formatStatus(order.status)}</Badge>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell py-2">
                           {formatDate(order.createdAt)}
                         </TableCell>
                         <TableCell className="text-right py-2">KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
                       </TableRow>
-                    ))}
+                    )))}
                   </TableBody>
                 </Table>
               </div>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertCircle, ArrowLeft, Package, Settings, Trash2, Edit, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Package, Settings, Trash2, Edit, Loader2, Building2 } from 'lucide-react';
 import type { Product, AgencyInventory } from '@/lib/types';
 import { useEffect, useState, useContext } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -552,7 +552,18 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {product.AgencyInventory.map((inventory) => {
+                  {!product.AgencyInventory || product.AgencyInventory.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Building2 className="h-8 w-8 text-muted-foreground" />
+                          <p className="text-sm font-medium text-muted-foreground">No agency inventory found</p>
+                          <p className="text-xs text-muted-foreground">No agencies have inventory for this product yet.</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    product.AgencyInventory.map((inventory) => {
                     const totalAgencyStock = inventory.agencyVariants.reduce((sum, v) => sum + v.stock, 0);
                     const isAgencyLowStock = totalAgencyStock < inventory.lowStockThreshold;
 
@@ -598,7 +609,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                         </TableCell>
                       </TableRow>
                     );
-                  })}
+                  }))}
                 </TableBody>
               </Table>
             </CardContent>
