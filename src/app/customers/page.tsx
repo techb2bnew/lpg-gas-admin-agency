@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, FileDown, Loader2, Search, X, Eye, Ban, CheckCircle } from 'lucide-react';
+import { MoreHorizontal, FileDown, Loader2, Search, X, Eye, Ban, CheckCircle, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { User } from '@/lib/types';
 import { Input } from '@/components/ui/input';
@@ -302,7 +302,18 @@ export default function CustomersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedUsers.map((user: User) => (
+                  {paginatedUsers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Users className="h-8 w-8 text-muted-foreground" />
+                          <p className="text-sm font-medium text-muted-foreground">No customers found</p>
+                          <p className="text-xs text-muted-foreground">There are no customers to display at this time.</p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedUsers.map((user: User) => (
                     <TableRow 
                       key={user.id} 
                       onClick={() => handleShowDetails(user)} 
@@ -365,7 +376,7 @@ export default function CustomersPage() {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )))}
                 </TableBody>
               </Table>
             </div>

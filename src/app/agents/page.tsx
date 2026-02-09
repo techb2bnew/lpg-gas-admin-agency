@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, Trash2, Mail, Loader2, ChevronDown, Filter, Pencil, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Trash2, Mail, Loader2, ChevronDown, Filter, Pencil, FileText, Truck } from 'lucide-react';
 import type { Agent, Agency } from '@/lib/types';
 import { useEffect, useState, useMemo, useContext, useCallback } from 'react';
 import { EditAgentDialog } from '@/components/edit-agent-dialog';
@@ -495,7 +495,18 @@ export default function AgentsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedAgents.map((agent: Agent) => (
+              {paginatedAgents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Truck className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm font-medium text-muted-foreground">No delivery agents found</p>
+                      <p className="text-xs text-muted-foreground">There are no delivery agents to display at this time.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paginatedAgents.map((agent: Agent) => (
                 <TableRow key={agent.id} data-state={selectedAgentIds.includes(agent.id) && "selected"} className="cursor-pointer">
                   <TableCell onClick={(e) => e.stopPropagation()}>
                      <Checkbox
@@ -603,7 +614,7 @@ export default function AgentsPage() {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
           )}

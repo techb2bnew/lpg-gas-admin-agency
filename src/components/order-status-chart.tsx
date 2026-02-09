@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useContext } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Legend } from 'recharts';
@@ -9,11 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from './ui/badge';
 import { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, eachYearOfInterval, isWithinInterval, Interval } from 'date-fns';
 import { Order } from '@/lib/types';
+import { AuthContext } from '@/context/auth-context';
 
 const chartConfig = {
   pending: { 
     label: "Pending Orders", 
     color: "#f59e0b"
+  },
+  confirmed: { 
+    label: "Click and Collect", 
+    color: "#8b5cf6"
+  },
+  in_progress: { 
+    label: "In-Progress Orders", 
+    color: "#06b6d4"
+  },
+  out_for_delivery: { 
+    label: "Out for Delivery", 
+    color: "#3b82f6"
   },
   delivered: { 
     label: "Delivered Orders", 
@@ -23,9 +36,9 @@ const chartConfig = {
     label: "Cancelled Orders", 
     color: "#ef4444"
   },
-  out_for_delivery: { 
-    label: "Out for Delivery", 
-    color: "#3b82f6"
+  returned: { 
+    label: "Returned Orders", 
+    color: "#f97316"
   },
 } satisfies ChartConfig;
 
@@ -35,11 +48,90 @@ interface OrderStatusChartProps {
     orders: Order[];
 }
 
+const orderStatusesForTabs: (Order['status'] | 'in-progress')[] = ['pending', 'confirmed', 'in-progress', 'out-for-delivery', 'delivered', 'cancelled', 'returned'];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export function OrderStatusChart({ orders }: OrderStatusChartProps) {
   const [timeframe, setTimeframe] = useState<Timeframe>('weekly');
+  const { token } = useContext(AuthContext);
+  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({
+    pending: 0,
+    confirmed: 0,
+    'in-progress': 0,
+    'out-for-delivery': 0,
+    delivered: 0,
+    cancelled: 0,
+    returned: 0
+  });
+  const [allOrdersForChart, setAllOrdersForChart] = useState<Order[]>([]);
+
+  // Fetch all orders and counts from API like Orders page does
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return;
+      
+      try {
+        const counts: Record<string, number> = {};
+        
+        // Initialize all status counts to 0
+        orderStatusesForTabs.forEach(status => {
+          counts[status] = 0;
+        });
+        
+        // Fetch all orders for graph data (without status filter)
+        const allOrdersUrl = new URL(`${API_BASE_URL}/api/orders`);
+        allOrdersUrl.searchParams.append('page', '1');
+        allOrdersUrl.searchParams.append('limit', '10000'); // Get all orders for accurate graph
+        
+        const allOrdersResponse = await fetch(allOrdersUrl.toString(), {
+          headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
+        });
+        
+        if (allOrdersResponse.ok) {
+          const allOrdersResult = await allOrdersResponse.json();
+          if (allOrdersResult.success) {
+            setAllOrdersForChart(allOrdersResult.data.orders || []);
+          }
+        }
+        
+        // Fetch counts for each status individually from API
+        const countPromises = orderStatusesForTabs.map(async (status) => {
+          const url = new URL(`${API_BASE_URL}/api/orders`);
+          url.searchParams.append('page', '1');
+          url.searchParams.append('limit', '1'); // We only need the totalItems count
+          const statusParam = status === 'in-progress' ? 'assigned' : status === 'out-for-delivery' ? 'out_for_delivery' : status;
+          url.searchParams.append('status', statusParam);
+          
+          try {
+            const response = await fetch(url.toString(), {
+              headers: { 'Authorization': `Bearer ${token}`, 'ngrok-skip-browser-warning': 'true' }
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                counts[status] = result.data.pagination.totalItems;
+              }
+            }
+          } catch (error) {
+            console.error(`Failed to fetch count for ${status}`, error);
+          }
+        });
+        
+        await Promise.all(countPromises);
+        setStatusCounts(counts);
+      } catch (error) {
+        console.error('Failed to fetch data', error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   const processedData = useMemo(() => {
-    if (!orders || orders.length === 0) return [];
+    // Use API fetched orders if available, otherwise fallback to prop
+    const ordersToUse = allOrdersForChart.length > 0 ? allOrdersForChart : orders;
+    if (!ordersToUse || ordersToUse.length === 0) return [];
     
     let interval;
     let formatLabel: (date: Date) => string;
@@ -64,7 +156,7 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
         formatLabel = (d) => format(d, 'MMM');
         break;
       case 'yearly':
-        const oldestOrderDate = orders.reduce((oldest, order) => {
+        const oldestOrderDate = ordersToUse.reduce((oldest, order) => {
           const orderDate = new Date(order.createdAt);
           return orderDate < oldest ? orderDate : oldest;
         }, new Date());
@@ -76,7 +168,19 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
     
     const intervals = getIntervals(interval);
     
-    return intervals.map((startDate) => {
+    const isLatestPeriod = (startDate: Date, endDate: Date) => {
+      if (timeframe === 'daily') {
+        return format(startDate, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
+      } else if (timeframe === 'weekly') {
+        return formatLabel(startDate) === formatLabel(startOfWeek(today, { weekStartsOn: 1 }));
+      } else if (timeframe === 'monthly') {
+        return formatLabel(startDate) === formatLabel(startOfMonth(today));
+      } else {
+        return formatLabel(startDate) === formatLabel(startOfYear(today));
+      }
+    };
+
+    return intervals.map((startDate, index) => {
         let endDate: Date;
         if (timeframe === 'daily') {
           // For daily, we need to include the entire day
@@ -91,25 +195,49 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
         }
         
         const periodInterval = { start: startDate, end: endDate };
+        const isLatest = index === intervals.length - 1 || isLatestPeriod(startDate, endDate);
 
-        const ordersInPeriod = orders.filter(order => {
-          const orderDate = new Date(order.createdAt);
-          return isWithinInterval(orderDate, periodInterval);
-        });
-        
-        const counts = ordersInPeriod.reduce((acc, order) => {
+        // For latest period, use API-fetched counts (current status counts)
+        // For historical periods, calculate from orders created in that period
+        let counts;
+        if (isLatest && statusCounts.pending !== undefined) {
+          // Use current status counts for latest period
+          counts = {
+            pending: statusCounts['pending'] || 0,
+            confirmed: statusCounts['confirmed'] || 0,
+            in_progress: statusCounts['in-progress'] || 0,
+            out_for_delivery: statusCounts['out-for-delivery'] || 0,
+            delivered: statusCounts['delivered'] || 0,
+            cancelled: statusCounts['cancelled'] || 0,
+            returned: statusCounts['returned'] || 0
+          };
+        } else {
+          // Calculate from orders created in this period
+          const ordersInPeriod = ordersToUse.filter(order => {
+            const orderDate = new Date(order.createdAt);
+            return isWithinInterval(orderDate, periodInterval);
+          });
+          
+          counts = ordersInPeriod.reduce((acc, order) => {
             const status = order.status.toLowerCase().replace(/[\s-]/g, '_');
-            if (status === 'assigned' || status === 'confirmed' || status === 'in_progress' || status === 'pending') {
+            if (status === 'pending') {
               acc.pending++;
-            } else if (status === 'returned' || status === 'cancelled') {
-              acc.cancelled++;
-            } else if (status === 'out_for_delivery' || status === 'out_for_delivery') {
+            } else if (status === 'confirmed') {
+              acc.confirmed++;
+            } else if (status === 'assigned' || status === 'in_progress') {
+              acc.in_progress++;
+            } else if (status === 'out_for_delivery') {
               acc.out_for_delivery++;
             } else if (status === 'delivered') {
               acc.delivered++;
+            } else if (status === 'cancelled') {
+              acc.cancelled++;
+            } else if (status === 'returned') {
+              acc.returned++;
             }
             return acc;
-          }, { pending: 0, delivered: 0, cancelled: 0, out_for_delivery: 0 });
+          }, { pending: 0, confirmed: 0, in_progress: 0, out_for_delivery: 0, delivered: 0, cancelled: 0, returned: 0 });
+        }
 
         return {
             date: formatLabel(startDate),
@@ -118,24 +246,20 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
         };
     });
 
-  }, [orders, timeframe]);
+  }, [allOrdersForChart, orders, timeframe, statusCounts]);
 
-  // Calculate total orders for summary
+  // Use API fetched counts instead of calculating from orders array
   const totalOrders = useMemo(() => {
-    return orders.reduce((acc, order) => {
-      const status = order.status.toLowerCase().replace(/[\s-]/g, '_');
-      if (status === 'assigned' || status === 'confirmed' || status === 'in_progress' || status === 'pending') {
-        acc.pending++;
-      } else if (status === 'returned' || status === 'cancelled') {
-        acc.cancelled++;
-      } else if (status === 'out_for_delivery') {
-        acc.out_for_delivery++;
-      } else if (status === 'delivered') {
-        acc.delivered++;
-      }
-      return acc;
-    }, { pending: 0, delivered: 0, cancelled: 0, out_for_delivery: 0 });
-  }, [orders]);
+    return {
+      pending: statusCounts['pending'] || 0,
+      confirmed: statusCounts['confirmed'] || 0,
+      in_progress: statusCounts['in-progress'] || 0,
+      out_for_delivery: statusCounts['out-for-delivery'] || 0,
+      delivered: statusCounts['delivered'] || 0,
+      cancelled: statusCounts['cancelled'] || 0,
+      returned: statusCounts['returned'] || 0
+    };
+  }, [statusCounts]);
 
   return (
     <Card className="w-full">
@@ -168,17 +292,29 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
             <div className="w-2 h-2 bg-amber-500 rounded-full mr-2"></div>
             Pending: {totalOrders.pending}
           </Badge>
-          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-            <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-            Delivered: {totalOrders.delivered}
+          <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+            <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+            Click and Collect: {totalOrders.confirmed}
+          </Badge>
+          <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 border-cyan-200">
+            <div className="w-2 h-2 bg-cyan-500 rounded-full mr-2"></div>
+            In-Progress: {totalOrders.in_progress}
           </Badge>
           <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
             <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
             Out for Delivery: {totalOrders.out_for_delivery}
           </Badge>
+          <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            Delivered: {totalOrders.delivered}
+          </Badge>
           <Badge variant="secondary" className="bg-red-100 text-red-800 border-red-200">
             <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
             Cancelled: {totalOrders.cancelled}
+          </Badge>
+          <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
+            <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+            Returned: {totalOrders.returned}
           </Badge>
         </div>
       </CardHeader>
@@ -222,6 +358,18 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05}/>
                   </linearGradient>
+                  <linearGradient id="confirmedGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.05}/>
+                  </linearGradient>
+                  <linearGradient id="inProgressGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.05}/>
+                  </linearGradient>
+                  <linearGradient id="returnedGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#f97316" stopOpacity={0.05}/>
+                  </linearGradient>
                 </defs>
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -251,7 +399,7 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
                 <ChartTooltip 
                   content={<ChartTooltipContent 
                     formatter={(value, name) => [
-                      value, 
+                      `${value} `, // Add space after count
                       chartConfig[name as keyof typeof chartConfig]?.label || name
                     ]}
                     labelFormatter={(label, payload) => {
@@ -311,6 +459,36 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
                   stackId="a"
                   dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
                   activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
+                />
+                <Area 
+                  dataKey="confirmed" 
+                  type="monotone" 
+                  fill="url(#confirmedGradient)" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={2}
+                  stackId="a"
+                  dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
+                />
+                <Area 
+                  dataKey="in_progress" 
+                  type="monotone" 
+                  fill="url(#inProgressGradient)" 
+                  stroke="#06b6d4" 
+                  strokeWidth={2}
+                  stackId="a"
+                  dot={{ fill: '#06b6d4', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#06b6d4', strokeWidth: 2 }}
+                />
+                <Area 
+                  dataKey="returned" 
+                  type="monotone" 
+                  fill="url(#returnedGradient)" 
+                  stroke="#f97316" 
+                  strokeWidth={2}
+                  stackId="a"
+                  dot={{ fill: '#f97316', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: '#f97316', strokeWidth: 2 }}
                 />
               </AreaChart>
             </ChartContainer>

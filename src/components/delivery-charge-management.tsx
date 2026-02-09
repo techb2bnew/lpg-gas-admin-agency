@@ -406,8 +406,8 @@ export function DeliveryChargeManagement() {
                 <div className="space-y-2">
                   <Label htmlFor="rate-per-km">Rate per Kilometer (KSH)</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      KSH
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none z-10">
+                      KSH&nbsp;
                     </span>
                     <Input
                       id="rate-per-km"
@@ -417,7 +417,7 @@ export function DeliveryChargeManagement() {
                       placeholder="Enter rate per kilometer"
                       value={ratePerKm}
                       onChange={(e) => setRatePerKm(e.target.value)}
-                      className="pl-8"
+                      className="pl-14"
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">
@@ -428,8 +428,8 @@ export function DeliveryChargeManagement() {
                 <div className="space-y-2">
                   <Label htmlFor="fixed-amount">Fixed Delivery Charge (KSH)</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                      KSH
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none z-10">
+                      KSH&nbsp;
                     </span>
                     <Input
                       id="fixed-amount"
@@ -439,7 +439,7 @@ export function DeliveryChargeManagement() {
                       placeholder="Enter fixed delivery charge"
                       value={fixedAmount}
                       onChange={(e) => setFixedAmount(e.target.value)}
-                      className="pl-8"
+                      className="pl-14"
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">

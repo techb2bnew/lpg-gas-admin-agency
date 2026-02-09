@@ -462,7 +462,7 @@ export function CouponManagement() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="minAmount">Minimum Amount (KSH)</Label>
+                    <Label htmlFor="minAmount">Apply Minimum Amount (KSH)</Label>
                     <Input
                       id="minAmount"
                       type="number"
@@ -474,7 +474,7 @@ export function CouponManagement() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="maxAmount">Maximum Amount (KSH) - Optional</Label>
+                    <Label htmlFor="maxAmount">Apply Maximum Amount (KSH) - Optional</Label>
                     <Input
                       id="maxAmount"
                       type="number"
@@ -549,7 +549,18 @@ export function CouponManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {coupons.map((coupon) => (
+                {coupons.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="h-24 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <IndianRupee className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-sm font-medium text-muted-foreground">No coupons found</p>
+                        <p className="text-xs text-muted-foreground">There are no coupons to display. Create your first coupon to get started.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  coupons.map((coupon) => (
                   <TableRow key={coupon.id}>
                     <TableCell className="font-mono font-bold">{coupon.code}</TableCell>
                     <TableCell>
@@ -636,7 +647,7 @@ export function CouponManagement() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </div>

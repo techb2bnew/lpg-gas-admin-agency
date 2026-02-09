@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, AlertCircle, Loader2, Trash2, Settings, PackagePlus, ChevronDown, Eye, Pencil, Building2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, AlertCircle, Loader2, Trash2, Settings, PackagePlus, ChevronDown, Eye, Pencil, Building2, Package } from 'lucide-react';
 import type { Product, AgencyInventory } from '@/lib/types';
 import { useEffect, useState, useMemo, useCallback, useContext } from 'react';
 import { EditProductDialog } from '@/components/edit-product-dialog';
@@ -555,7 +555,18 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedItems.map((product) => {
+                {paginatedItems.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Package className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-sm font-medium text-muted-foreground">No products found</p>
+                        <p className="text-xs text-muted-foreground">There are no products to display at this time.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedItems.map((product) => {
                   
                   const agencyInventory = !isAdmin 
                     ? product.AgencyInventory?.find(inv => inv.agencyId === profile.agencyId)
@@ -717,7 +728,8 @@ export default function ProductsPage() {
                       </TableCell>
                     </TableRow>
                   );
-                })}
+                })
+              )}
               </TableBody>
             </Table>
           )}

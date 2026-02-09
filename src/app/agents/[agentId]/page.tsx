@@ -21,7 +21,8 @@ import {
   Calendar, 
   MapPin, 
   Truck, 
-  Package, 
+  Package,
+  ShoppingCart, 
   DollarSign, 
   Users, 
   TrendingUp,
@@ -35,7 +36,7 @@ import {
 } from 'lucide-react';
 import { AuthContext, useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatStatus } from '@/lib/utils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -189,7 +190,7 @@ function OrderDetailsDialog({ order, children }: { order: any; children: React.R
             {getStatusIcon(order.status)}
             <span>Order Details - #{order.orderNumber.slice(-8)}</span>
             <Badge variant={statusVariant[order.status] || 'secondary'}>
-              {order.status.replace('_', ' ')}
+              {formatStatus(order.status)}
             </Badge>
           </DialogTitle>
         </DialogHeader>
@@ -624,7 +625,18 @@ export default function AgentDetailsPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {paginatedOrders.map((order) => (
+                      {paginatedOrders.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={10} className="h-24 text-center">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                              <p className="text-sm font-medium text-muted-foreground">No orders found</p>
+                              <p className="text-xs text-muted-foreground">This agent has no orders assigned yet.</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedOrders.map((order) => (
                         <TableRow key={order.id}>
                           <TableCell className="font-medium">
                             #{order.orderNumber.slice(-8)}
@@ -637,7 +649,7 @@ export default function AgentDetailsPage() {
                           </TableCell>
                           <TableCell>
                             <Badge variant={statusVariant[order.status] || 'secondary'}>
-                              {order.status.replace('_', ' ')}
+                              {formatStatus(order.status)}
                             </Badge>
                           </TableCell>
                           <TableCell>KSH{parseFloat(order.totalAmount).toLocaleString()}</TableCell>
@@ -666,7 +678,7 @@ export default function AgentDetailsPage() {
                             </OrderDetailsDialog>
                           </TableCell>
                         </TableRow>
-                      ))}
+                      )))}
                     </TableBody>
                   </Table>
                 </div>

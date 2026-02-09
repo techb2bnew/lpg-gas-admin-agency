@@ -179,22 +179,21 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
     : profile.photoUrl ? `${API_BASE_URL}/${profile.photoUrl}` : '';
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
+    <div className="min-h-screen w-full">
+      <div className="hidden border-r bg-muted/40 md:block fixed left-0 top-0 h-screen w-[220px] lg:w-[280px] z-40">
+        <div className="flex h-full flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <Image src="/mainIcon.png" alt="LEADWAY GAS" width={1000} height={500} className='w-[130px]'/>
-              <span className="text-[#035db7]">{appNameToDisplay()}</span>
             </Link>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             {sidebarNav}
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+      <div className="flex flex-col md:ml-[220px] lg:ml-[280px]">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-muted/40 px-4 backdrop-blur supports-[backdrop-filter]:bg-muted/60 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -206,12 +205,16 @@ export function AppShell({ children, onConfirmAndAssignFromNotification, orders 
               <div className="flex h-14 items-center border-b mb-4">
                   <Link href="/" className="flex items-center gap-2 font-semibold">
                   <Image src="/mainIcon.png" alt="LEADWAY GAS" width={1000} height={500} className='w-[130px]'/>
-                    <span className="">{appNameToDisplay()}</span>
                   </Link>
               </div>
               {sidebarNav}
             </SheetContent>
           </Sheet>
+          <div className="flex items-center">
+            <div className="px-4 py-2 bg-background border border-border rounded-md">
+              <span className="text-sm font-semibold text-[#035db7]">{appNameToDisplay()}</span>
+            </div>
+          </div>
           <div className="w-full flex-1" />
            {profile.role === 'agency_owner' && profile.agencyStatus && (
                <div className="flex items-center gap-2">
