@@ -5,7 +5,7 @@ import { requestNotificationPermission, onForegroundMessage } from '@/lib/fireba
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/auth-context';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://gasbookingbackend.base2brand.com';
 
 interface UseFCMOptions {
   onMessage?: (payload: any) => void;
