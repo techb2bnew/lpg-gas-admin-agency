@@ -423,14 +423,14 @@ export default function AgenciesPage() {
                     <TableCell onClick={(e) => e.stopPropagation()}>
                        <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="w-28 justify-between capitalize">
+                            <Button variant="outline" size="sm" className="w-28 justify-between capitalize group">
                                 <span className={cn({
-                                    'text-primary': agency.status === 'active',
-                                    'text-gray-500': agency.status === 'inactive'
+                                    'text-primary group-hover:text-primary-foreground': agency.status === 'active',
+                                    'text-gray-500 group-hover:text-gray-900': agency.status === 'inactive'
                                 })}>
                                     {agency.status}
                                 </span>
-                                <ChevronDown className="h-4 w-4 text-muted-foreground"/>
+                                <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-primary-foreground"/>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">

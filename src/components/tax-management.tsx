@@ -33,6 +33,18 @@ export function TaxManagement() {
   const [fixedAmount, setFixedAmount] = useState('');
   const { toast } = useToast();
 
+  // Helper function to format number without unnecessary .00
+  const formatNumber = (num: number | string): string => {
+    const value = typeof num === 'string' ? parseFloat(num) : num;
+    if (isNaN(value)) return '';
+    // If it's a whole number, return without decimals
+    if (value % 1 === 0) {
+      return value.toString();
+    }
+    // Otherwise, return with decimals but remove trailing zeros
+    return value.toString().replace(/\.?0+$/, '');
+  };
+
   // Socket event listeners for real-time updates
   useEffect(() => {
     const handleTaxUpdated = (data: any) => {
@@ -46,11 +58,11 @@ export function TaxManagement() {
       
       if (taxData.percentage > 0) {
         setTaxType('percentage');
-        setPercentage(taxData.percentage.toString());
+        setPercentage(formatNumber(taxData.percentage));
         setFixedAmount('');
       } else if (taxData.fixedAmount > 0) {
         setTaxType('fixed');
-        setFixedAmount(taxData.fixedAmount.toString());
+        setFixedAmount(formatNumber(taxData.fixedAmount));
         setPercentage('');
       }
       
@@ -116,11 +128,11 @@ export function TaxManagement() {
         setTaxConfig(data.data);
         if (data.data.percentage > 0) {
           setTaxType('percentage');
-          setPercentage(data.data.percentage.toString());
+          setPercentage(formatNumber(data.data.percentage));
           setFixedAmount('');
         } else if (data.data.fixedAmount > 0) {
           setTaxType('fixed');
-          setFixedAmount(data.data.fixedAmount.toString());
+          setFixedAmount(formatNumber(data.data.fixedAmount));
           setPercentage('');
         }
       } else {
@@ -318,9 +330,9 @@ export function TaxManagement() {
                 <AlertDescription>
                   <strong>Current Tax Configuration:</strong>
                   {taxConfig.percentage > 0 ? (
-                    <span> {taxConfig.percentage}% tax rate</span>
+                    <span> {formatNumber(taxConfig.percentage)}% tax rate</span>
                   ) : (
-                    <span> KSH{taxConfig.fixedAmount} fixed tax amount</span>
+                    <span> KSH{formatNumber(taxConfig.fixedAmount)} fixed tax amount</span>
                   )}
                 </AlertDescription>
               </Alert>

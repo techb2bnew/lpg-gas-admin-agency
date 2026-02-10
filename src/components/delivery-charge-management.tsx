@@ -38,6 +38,18 @@ export function DeliveryChargeManagement() {
   const [deliveryRadius, setDeliveryRadius] = useState('');
   const { toast} = useToast();
 
+  // Helper function to format number without unnecessary .00
+  const formatNumber = (num: number | string): string => {
+    const value = typeof num === 'string' ? parseFloat(num) : num;
+    if (isNaN(value)) return '';
+    // If it's a whole number, return without decimals
+    if (value % 1 === 0) {
+      return value.toString();
+    }
+    // Otherwise, return with decimals but remove trailing zeros
+    return value.toString().replace(/\.?0+$/, '');
+  };
+
   // Socket event listeners for real-time updates
   useEffect(() => {
     const handleDeliveryChargeUpdated = (data: any) => {
@@ -48,9 +60,9 @@ export function DeliveryChargeManagement() {
       if (profile?.agencyId && chargeData.agencyId === profile.agencyId) {
         setDeliveryCharge(chargeData);
         setChargeType(chargeData.chargeType);
-        setRatePerKm(chargeData.ratePerKm?.toString() || '');
-        setFixedAmount(chargeData.fixedAmount?.toString() || '');
-        setDeliveryRadius(chargeData.deliveryRadius?.toString() || '');
+        setRatePerKm(formatNumber(chargeData.ratePerKm || 0));
+        setFixedAmount(formatNumber(chargeData.fixedAmount || 0));
+        setDeliveryRadius(formatNumber(chargeData.deliveryRadius || 0));
         
         toast({
           title: "Delivery Charge Updated",
@@ -103,24 +115,43 @@ export function DeliveryChargeManagement() {
         }
       });
       
+      const data = await response.json();
+      
+      // Handle 404 or success: false as "no delivery charge configured yet" - not an error
+      if (response.status === 404 || (data.success === false && data.error?.includes('not found'))) {
+        // No delivery charge configured yet - this is normal, not an error
+        setDeliveryCharge(null);
+        setChargeType('per_km');
+        setRatePerKm('');
+        setFixedAmount('');
+        setDeliveryRadius('');
+        setLoading(false);
+        return;
+      }
+      
       if (!response.ok) {
         handleApiError(response);
         return;
       }
-
-      const data = await response.json();
       
       if (data.success && data.data) {
         setDeliveryCharge(data.data);
         setChargeType(data.data.chargeType);
-        setDeliveryRadius(data.data.deliveryRadius?.toString() || '');
+        setDeliveryRadius(formatNumber(data.data.deliveryRadius || 0));
         if (data.data.chargeType === 'per_km') {
-          setRatePerKm(data.data.ratePerKm?.toString() || '');
+          setRatePerKm(formatNumber(data.data.ratePerKm || 0));
           setFixedAmount('');
         } else {
-          setFixedAmount(data.data.fixedAmount?.toString() || '');
+          setFixedAmount(formatNumber(data.data.fixedAmount || 0));
           setRatePerKm('');
         }
+      } else if (data.success && !data.data) {
+        // No delivery charge configured yet - this is normal
+        setDeliveryCharge(null);
+        setChargeType('per_km');
+        setRatePerKm('');
+        setFixedAmount('');
+        setDeliveryRadius('');
       }
     } catch (error) {
       toast({
@@ -343,19 +374,17 @@ export function DeliveryChargeManagement() {
                       <strong>Current Delivery Charge:</strong>
                       {deliveryCharge.chargeType === 'per_km' ? (
                         <span className="flex items-center ml-2">
-                          KSH
-                          {parseFloat(deliveryCharge.ratePerKm?.toString() || '0')} per km
+                          KSH{formatNumber(deliveryCharge.ratePerKm || 0)} per km
                         </span>
                       ) : (
                         <span className="flex items-center ml-2">
-                          KSH
-                          {parseFloat(deliveryCharge.fixedAmount?.toString() || '0')} fixed charge
+                          KSH{formatNumber(deliveryCharge.fixedAmount || 0)} fixed charge
                         </span>
                       )}
                     </div>
                     <div>
                       <strong>Delivery Radius:</strong>
-                      <span className="ml-2">{parseFloat(deliveryCharge.deliveryRadius?.toString() || '0')} km</span>
+                      <span className="ml-2">{formatNumber(deliveryCharge.deliveryRadius || 0)} km</span>
                     </div>
                   </div>
                 </AlertDescription>
