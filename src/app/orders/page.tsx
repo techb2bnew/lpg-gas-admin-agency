@@ -834,17 +834,49 @@ function OrdersPageContent() {
             const agent = order.assignedAgent ? order.assignedAgent.name : 'Unassigned';
             const agency = order.agency ? order.agency.name : 'N/A';
             
+            // Fix amount formatting - ensure proper number without locale-specific formatting or commas
+            const amountValue = order.totalAmount ? parseFloat(String(order.totalAmount)) : 0;
+            const formattedAmount = isNaN(amountValue) ? '0.00' : amountValue.toFixed(2);
+            // Remove any commas that might be added by toLocaleString
+            const amount = `KSH${formattedAmount.replace(/,/g, '')}`;
+            
+            // Fix status formatting - ensure clean text without numbers
+            const status = formatStatus(order.status || 'Unknown');
+            
+            // Fix date formatting - use Excel-friendly format (YYYY-MM-DD)
+            let formattedDate = '';
+            if (order.createdAt) {
+              try {
+                const date = new Date(order.createdAt);
+                if (!isNaN(date.getTime())) {
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, '0');
+                  const day = String(date.getDate()).padStart(2, '0');
+                  formattedDate = `${year}-${month}-${day}`;
+                }
+              } catch (e) {
+                formattedDate = '';
+              }
+            }
+            
+            // Properly escape CSV values - always quote to prevent Excel parsing issues
+            const escapeCSV = (value: string) => {
+              const cleanValue = String(value || '').replace(/"/g, '""');
+              // Always quote values to prevent Excel from misinterpreting commas, numbers, etc.
+              return `"${cleanValue}"`;
+            };
+            
             return [
-              `#${order.orderNumber.slice(-8)}`,
-              `"${order.customerName}"`,
-              `"${items}"`,
-              `"${agency}"`,
-              order.deliveryMode?.replace('_', ' ') || 'N/A',
-              order.paymentMethod?.replace('_', ' ') || 'N/A',
-              `"${agent}"`,
-              `KSH${parseFloat(order.totalAmount).toLocaleString()}`,
-              formatStatus(order.status),
-              formatDate(order.createdAt)
+              escapeCSV(`#${order.orderNumber ? order.orderNumber.slice(-8) : order.id.slice(0, 8)}`),
+              escapeCSV(order.customerName || 'Unknown'),
+              escapeCSV(items),
+              escapeCSV(agency),
+              escapeCSV(order.deliveryMode?.replace(/_/g, ' ') || 'N/A'),
+              escapeCSV(order.paymentMethod?.replace(/_/g, ' ') || 'N/A'),
+              escapeCSV(agent),
+              escapeCSV(amount),
+              escapeCSV(status),
+              escapeCSV(formattedDate)
             ].join(',');
           }).join('\n');
           

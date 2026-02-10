@@ -28,6 +28,18 @@ export function PlatformChargeManagement() {
   const [amount, setAmount] = useState('');
   const { toast } = useToast();
 
+  // Helper function to format number without unnecessary .00
+  const formatNumber = (num: number | string): string => {
+    const value = typeof num === 'string' ? parseFloat(num) : num;
+    if (isNaN(value)) return '';
+    // If it's a whole number, return without decimals
+    if (value % 1 === 0) {
+      return value.toString();
+    }
+    // Otherwise, return with decimals but remove trailing zeros
+    return value.toString().replace(/\.?0+$/, '');
+  };
+
   // Socket event listeners for real-time updates
   useEffect(() => {
     const handlePlatformChargeUpdated = (data: any) => {
@@ -37,7 +49,7 @@ export function PlatformChargeManagement() {
         id: chargeData.id,
         amount: chargeData.amount || 0
       });
-      setAmount(chargeData.amount?.toString() || '');
+      setAmount(formatNumber(chargeData.amount || 0));
       
       toast({
         title: "Platform Charge Updated",
@@ -98,7 +110,7 @@ export function PlatformChargeManagement() {
       if (data.success) {
         setPlatformCharge(data.data);
         if (data.data.amount > 0) {
-          setAmount(data.data.amount.toString());
+          setAmount(formatNumber(data.data.amount));
         } else {
           setAmount('');
         }
@@ -278,8 +290,7 @@ export function PlatformChargeManagement() {
                 <AlertDescription>
                   <strong>Current Platform Charge:</strong>
                   <span className="flex items-center ml-2">
-                    KSH
-                    {platformCharge.amount} per order
+                    KSH{formatNumber(platformCharge.amount)} per order
                   </span>
                 </AlertDescription>
               </Alert>

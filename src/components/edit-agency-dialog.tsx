@@ -146,16 +146,26 @@ export function EditAgencyDialog({ agency, isOpen, onOpenChange, onAgencyUpdate 
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
+      <DialogContent 
+        className="max-w-[95vw] sm:max-w-2xl lg:max-w-3xl max-h-[95vh] flex flex-col p-0 gap-0 overflow-hidden"
+        onInteractOutside={(e) => {
+          // Prevent closing when clicking on pac-container
+          const target = e.target as HTMLElement;
+          if (target.closest('.pac-container')) {
+            e.preventDefault();
+          }
+        }}
+      >
+        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
           <DialogTitle>Edit Agency: {agency.name}</DialogTitle>
           <DialogDescription>
             Update the details for this agency.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} noValidate className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 overflow-y-auto overflow-x-visible px-6 py-4" style={{ maxHeight: 'calc(95vh - 200px)' }}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 py-4">
               <div className="md:col-span-1 flex flex-col items-center gap-4">
                   <div className="relative">
                     <Avatar className="h-32 w-32 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
@@ -209,8 +219,9 @@ export function EditAgencyDialog({ agency, isOpen, onOpenChange, onAgencyUpdate 
                   <FormField control={form.control} name="pincode" render={({ field }) => ( <FormItem><FormLabel>Pincode <span className="text-red-500">*</span></FormLabel><FormControl><Input {...field} maxLength={6} /></FormControl><FormMessage /></FormItem>)}/>
                   <FormField control={form.control} name="landmark" render={({ field }) => ( <FormItem className="col-span-2"><FormLabel>Landmark</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
                 </div>
+              </div>
             </div>
-            <DialogFooter className="pt-4">
+            <DialogFooter className="px-6 pb-6 pt-4 flex-shrink-0 border-t">
               <DialogClose asChild>
                 <Button variant="outline" type="button">Cancel</Button>
               </DialogClose>
