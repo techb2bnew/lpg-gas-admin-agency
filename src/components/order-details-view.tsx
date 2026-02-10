@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import type { Order, Agent } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { IndianRupee, User, Truck, Calendar, ShoppingBag, Wallet, Package, Phone, MapPin, XCircle, CheckCircle, Loader2, Mail, Building2, FileText, Banknote, Image as ImageIcon } from 'lucide-react';
+import { IndianRupee, User, Truck, Calendar, ShoppingBag, Wallet, Package, Phone, MapPin, XCircle, CheckCircle, Loader2, Mail, Building2, FileText, Banknote, Image as ImageIcon, RefreshCcw } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -217,16 +217,22 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                         <span>{new Date(order.deliveredAt).toLocaleString()}</span>
                     </div>
                 )}
-                {order.cancelledAt && (
-                    <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground flex items-center gap-2"><XCircle className="h-4 w-4"/>Cancelled</span>
-                        <span>{new Date(order.cancelledAt).toLocaleString()}</span>
-                    </div>
-                )}
                 {order.returnedAt && (
                     <div className="flex justify-between items-center">
                         <span className="text-muted-foreground flex items-center gap-2"><XCircle className="h-4 w-4"/>Returned</span>
                         <span>{new Date(order.returnedAt).toLocaleString()}</span>
+                    </div>
+                )}
+                {order.reorderedAt && (
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground flex items-center gap-2"><RefreshCcw className="h-4 w-4"/>Reordered</span>
+                        <span>{new Date(order.reorderedAt).toLocaleString()}</span>
+                    </div>
+                )}
+                {order.cancelledAt && (
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground flex items-center gap-2"><XCircle className="h-4 w-4"/>Cancelled</span>
+                        <span>{new Date(order.cancelledAt).toLocaleString()}</span>
                     </div>
                 )}
                 <div className="flex justify-between items-center bg-primary/10 dark:bg-primary/20 p-2 rounded-md">
