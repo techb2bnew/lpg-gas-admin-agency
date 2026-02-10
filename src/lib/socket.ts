@@ -96,7 +96,7 @@ class SocketService {
       return this.socket;
     }
 
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'https://gasbookingbackend.base2brand.com';
     
     try {
       const authToken = token || this.getAuthToken();

@@ -17,7 +17,7 @@ interface NotificationContextType {
   leaveRoom: (room: string, data?: any) => void;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://gasbookingbackend.base2brand.com';
 
 export const NotificationContext = createContext<NotificationContextType>({
   notifications: [],
