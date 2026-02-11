@@ -46,10 +46,12 @@ const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 
   'out-for-delivery': 'outline',
   'cancelled': 'destructive',
   'returned': 'destructive',
+  'return_approved': 'default',
+  'return_rejected': 'destructive',
 };
 
 const orderStatusesForDropdown: Order['status'][] = ['pending', 'delivered', 'cancelled', 'returned'];
-const orderStatusesForTabs: (Order['status'] | 'in-progress')[] = ['pending', 'confirmed', 'in-progress', 'out-for-delivery', 'delivered', 'cancelled', 'returned'];
+const orderStatusesForTabs: (Order['status'] | 'in-progress')[] = ['pending', 'confirmed', 'in-progress', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'return_approved', 'return_rejected'];
 
 
 function OrdersTable({ 
@@ -201,19 +203,39 @@ function OrdersTable({
                                 value={order.status} 
                                 onValueChange={(newStatus) => onStatusChange(order, newStatus as Order['status'])}
                             >
-                            {orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
-                                <DropdownMenuRadioItem 
-                                key={status} 
-                                value={status}
-                                disabled={
-                                    (status === 'in-progress' && !order.assignedAgent) || 
-                                    isActionDisabled(order.status)
-                                }
-                                >
-                                {formatStatus(status)}
-                                {status === 'in-progress' && !order.assignedAgent && " (Assign agent first)"}
-                                </DropdownMenuRadioItem>
-                            ))}
+                            {order.status === 'returned' ? (
+                                <>
+                                    <DropdownMenuRadioItem value="return_approved">
+                                        Return Approve
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value="return_rejected">
+                                        Return Reject
+                                    </DropdownMenuRadioItem>
+                                    {orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
+                                        <DropdownMenuRadioItem 
+                                            key={status} 
+                                            value={status}
+                                            disabled={true}
+                                        >
+                                            {formatStatus(status)}
+                                        </DropdownMenuRadioItem>
+                                    ))}
+                                </>
+                            ) : (
+                                orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
+                                    <DropdownMenuRadioItem 
+                                    key={status} 
+                                    value={status}
+                                    disabled={
+                                        (status === 'in-progress' && !order.assignedAgent) || 
+                                        isActionDisabled(order.status)
+                                    }
+                                    >
+                                    {formatStatus(status)}
+                                    {status === 'in-progress' && !order.assignedAgent && " (Assign agent first)"}
+                                    </DropdownMenuRadioItem>
+                                ))
+                            )}
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -687,6 +709,12 @@ function OrdersPageContent() {
     let notes;
     if (newStatus === 'confirmed') {
         notes = 'Order confirmed and ready for delivery';
+    } else if (newStatus === 'return_approved') {
+        const userRole = profile.role === 'admin' || profile.role === 'super_admin' ? 'admin' : 'agency';
+        notes = `Return request approved by ${userRole}`;
+    } else if (newStatus === 'return_rejected') {
+        const userRole = profile.role === 'admin' || profile.role === 'super_admin' ? 'admin' : 'agency';
+        notes = `Return request rejected by ${userRole}`;
     }
 
     await updateOrderStatus(order, newStatus, notes);

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import type { Order, Agent } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { IndianRupee, User, Truck, Calendar, ShoppingBag, Wallet, Package, Phone, MapPin, XCircle, CheckCircle, Loader2, Mail, Building2, FileText, Banknote, Image as ImageIcon, RefreshCcw } from 'lucide-react';
+import { IndianRupee, User, Truck, Calendar, ShoppingBag, Wallet, Package, Phone, MapPin, XCircle, CheckCircle, Loader2, Mail, Building2, FileText, Banknote, Image as ImageIcon, RefreshCcw, CheckCircle2 } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -42,7 +42,9 @@ const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 
     'in-progress': 'outline',
     'out-for-delivery': 'outline',
     'cancelled': 'destructive',
-    'returned': 'destructive'
+    'returned': 'destructive',
+    'return_approved': 'default',
+    'return_rejected': 'destructive'
   };
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -223,6 +225,18 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                         <span>{new Date(order.returnedAt).toLocaleString()}</span>
                     </div>
                 )}
+                {order.returnApprovedAt && (
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-600"/>Return Approved</span>
+                        <span>{new Date(order.returnApprovedAt).toLocaleString()}</span>
+                    </div>
+                )}
+                {order.returnRejectedAt && (
+                    <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground flex items-center gap-2"><XCircle className="h-4 w-4 text-red-600"/>Return Rejected</span>
+                        <span>{new Date(order.returnRejectedAt).toLocaleString()}</span>
+                    </div>
+                )}
                 {order.reorderedAt && (
                     <div className="flex justify-between items-center">
                         <span className="text-muted-foreground flex items-center gap-2"><RefreshCcw className="h-4 w-4"/>Reordered</span>
@@ -273,6 +287,22 @@ export function OrderDetailsView({ order, onUpdate }: OrderDetailsViewProps) {
                    <div className="flex justify-between items-start pt-2">
                         <span className="text-muted-foreground flex items-center gap-2"><XCircle className="h-4 w-4"/>Return Reason</span>
                         <span className="text-right text-destructive text-sm font-medium">{order.returnReason}</span>
+                    </div>
+                )}
+                 {(order.status === 'return_approved' || order.returnApprovedBy) && order.returnApprovedBy && (
+                   <div className="flex justify-between items-start pt-2">
+                        <span className="text-muted-foreground flex items-center gap-2"><User className="h-4 w-4"/>Approved By</span>
+                        <span className="text-right capitalize text-sm font-medium">
+                            {order.returnApprovedBy === 'admin' ? 'Admin' : 'Agency'}{order.returnApprovedByName ? ` - ${order.returnApprovedByName}` : ''}
+                        </span>
+                    </div>
+                )}
+                 {(order.status === 'return_rejected' || order.returnRejectedBy) && order.returnRejectedBy && (
+                   <div className="flex justify-between items-start pt-2">
+                        <span className="text-muted-foreground flex items-center gap-2"><User className="h-4 w-4"/>Rejected By</span>
+                        <span className="text-right capitalize text-sm font-medium">
+                            {order.returnRejectedBy === 'admin' ? 'Admin' : 'Agency'}{order.returnRejectedByName ? ` - ${order.returnRejectedByName}` : ''}
+                        </span>
                     </div>
                 )}
             </div>

@@ -124,7 +124,7 @@ export interface Order {
   totalRevenue?: number;
   paymentMethod: string;
   paymentStatus: string;
-  status: 'pending' | 'confirmed' | 'in-progress' | 'out-for-delivery' | 'delivered' | 'cancelled' | 'returned' | 'assigned';
+  status: 'pending' | 'confirmed' | 'in-progress' | 'out-for-delivery' | 'delivered' | 'cancelled' | 'returned' | 'return_approved' | 'return_rejected' | 'assigned';
   adminNotes?: string | null;
   agentNotes?: string | null;
   createdAt: string;
@@ -142,6 +142,14 @@ export interface Order {
   returnedById?: string;
   returnedByName?: string;
   returnReason?: string;
+  returnApprovedAt?: string | null;
+  returnApprovedBy?: 'admin' | 'agency';
+  returnApprovedById?: string;
+  returnApprovedByName?: string;
+  returnRejectedAt?: string | null;
+  returnRejectedBy?: 'admin' | 'agency';
+  returnRejectedById?: string;
+  returnRejectedByName?: string;
   assignedAgent?: {
     id: string;
     name: string;

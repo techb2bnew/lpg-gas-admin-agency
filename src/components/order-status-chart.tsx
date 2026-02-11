@@ -37,8 +37,16 @@ const chartConfig = {
     color: "#ef4444"
   },
   returned: { 
-    label: "Returned Orders", 
+    label: "Return Requests", 
     color: "#f97316"
+  },
+  return_approved: { 
+    label: "Return Approved", 
+    color: "#10b981"
+  },
+  return_rejected: { 
+    label: "Return Rejected", 
+    color: "#ef4444"
   },
 } satisfies ChartConfig;
 
@@ -48,7 +56,7 @@ interface OrderStatusChartProps {
     orders: Order[];
 }
 
-const orderStatusesForTabs: (Order['status'] | 'in-progress')[] = ['pending', 'confirmed', 'in-progress', 'out-for-delivery', 'delivered', 'cancelled', 'returned'];
+const orderStatusesForTabs: (Order['status'] | 'in-progress')[] = ['pending', 'confirmed', 'in-progress', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'return_approved', 'return_rejected'];
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export function OrderStatusChart({ orders }: OrderStatusChartProps) {
@@ -61,7 +69,9 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
     'out-for-delivery': 0,
     delivered: 0,
     cancelled: 0,
-    returned: 0
+    returned: 0,
+    return_approved: 0,
+    return_rejected: 0
   });
   const [allOrdersForChart, setAllOrdersForChart] = useState<Order[]>([]);
 
@@ -234,9 +244,13 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
               acc.cancelled++;
             } else if (status === 'returned') {
               acc.returned++;
+            } else if (status === 'return_approved') {
+              acc.return_approved++;
+            } else if (status === 'return_rejected') {
+              acc.return_rejected++;
             }
             return acc;
-          }, { pending: 0, confirmed: 0, in_progress: 0, out_for_delivery: 0, delivered: 0, cancelled: 0, returned: 0 });
+          }, { pending: 0, confirmed: 0, in_progress: 0, out_for_delivery: 0, delivered: 0, cancelled: 0, returned: 0, return_approved: 0, return_rejected: 0 });
         }
 
         return {
@@ -257,7 +271,9 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
       out_for_delivery: statusCounts['out-for-delivery'] || 0,
       delivered: statusCounts['delivered'] || 0,
       cancelled: statusCounts['cancelled'] || 0,
-      returned: statusCounts['returned'] || 0
+      returned: statusCounts['returned'] || 0,
+      return_approved: statusCounts['return_approved'] || 0,
+      return_rejected: statusCounts['return_rejected'] || 0
     };
   }, [statusCounts]);
 
@@ -314,7 +330,15 @@ export function OrderStatusChart({ orders }: OrderStatusChartProps) {
           </Badge>
           <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
             <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-            Returned: {totalOrders.returned}
+            Return Requests: {totalOrders.returned}
+          </Badge>
+          <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            Return Approved: {totalOrders.return_approved}
+          </Badge>
+          <Badge variant="secondary" className="bg-red-100 text-red-800 border-red-200">
+            <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+            Return Rejected: {totalOrders.return_rejected}
           </Badge>
         </div>
       </CardHeader>
