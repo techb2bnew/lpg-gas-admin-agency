@@ -221,6 +221,36 @@ function OrdersTable({
                                         </DropdownMenuRadioItem>
                                     ))}
                                 </>
+                            ) : order.status === 'return_approved' ? (
+                                <>
+                                    <DropdownMenuRadioItem value="returned">
+                                        Return Requests
+                                    </DropdownMenuRadioItem>
+                                    {orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
+                                        <DropdownMenuRadioItem 
+                                            key={status} 
+                                            value={status}
+                                            disabled={true}
+                                        >
+                                            {formatStatus(status)}
+                                        </DropdownMenuRadioItem>
+                                    ))}
+                                </>
+                            ) : order.status === 'return_rejected' ? (
+                                <>
+                                    <DropdownMenuRadioItem value="returned">
+                                        Return Requests
+                                    </DropdownMenuRadioItem>
+                                    {orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
+                                        <DropdownMenuRadioItem 
+                                            key={status} 
+                                            value={status}
+                                            disabled={true}
+                                        >
+                                            {formatStatus(status)}
+                                        </DropdownMenuRadioItem>
+                                    ))}
+                                </>
                             ) : (
                                 orderStatusesForDropdown.filter(s => !['assigned', 'out-for-delivery'].includes(s)).map(status => (
                                     <DropdownMenuRadioItem 
