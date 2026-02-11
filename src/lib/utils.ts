@@ -88,6 +88,21 @@ export function formatStatus(status: string): string {
     return 'Click and Collect';
   }
   
+  // Special case: Convert "returned" to "Return Requests"
+  if (status.toLowerCase() === 'returned') {
+    return 'Return Requests';
+  }
+  
+  // Special case: Convert "return_approved" to "Return Approved"
+  if (status.toLowerCase() === 'return_approved') {
+    return 'Return Approved';
+  }
+  
+  // Special case: Convert "return_rejected" to "Return Rejected"
+  if (status.toLowerCase() === 'return_rejected') {
+    return 'Return Rejected';
+  }
+  
   return status
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
